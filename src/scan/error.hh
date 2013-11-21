@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <ostream>
+#include "stdlib.h"
 
 using namespace std;
 
