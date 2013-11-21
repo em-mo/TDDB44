@@ -39,13 +39,22 @@ FLOAT4 {DIGIT}*{EPART}
 EPART e[\+-]?{DIGIT}*
 ID [a-z][a-z0-9]*
 
-STRING '([^']|'')*'
+STRING '([^'\n]|'')*'
+NEWLINESTRING '([^'\n]|'')*\n
+
 /* Position information is entered into the yylloc variable, so we will be
    able to generate good error messages later in later phases. */
 /* Your code should be entered below the %%. Expressions to handle the 
    following: Diesel comments, Diesel string constants, Diesel 
    identifiers, integers, reals, and whitespace. */
 %%
+
+{FLOAT}           {yylval.rval = atof(yytext);
+                 yylloc.first_line=yylineno;
+                 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_REALNUM;
+                }
 
 \.				{yylloc.first_line=yylineno;
  				 yylloc.first_column=column;
@@ -239,21 +248,14 @@ procedure		{yylloc.first_line=yylineno;
                          return T_PROCEDURE;	
 				}
 
-FLOAT           {yylval.rval = atof(yytext);
-                 yylloc.first_line=yylineno;
-                 yylloc.first_column=column;
-                         column += yyleng;
-                         return T_REALNUM;
-                }
-
-INTEGER         {yylval.ival = atoi(yytext);
+{INTEGER}         {yylval.ival = atoi(yytext);
                  yylloc.first_line=yylineno;
                  yylloc.first_column=column;
                          column += yyleng;
                          return T_INTNUM;
                 }
 
-STRING          {char *fixed_string = sym_tab->fix_string(yytext);
+{STRING}          {char *fixed_string = sym_tab->fix_string(yytext);
                  yylval.str = sym_tab->pool_install(fixed_string);
                  delete fixed_string;
 
@@ -263,14 +265,18 @@ STRING          {char *fixed_string = sym_tab->fix_string(yytext);
                          return T_STRINGCONST;
                 }
 
-ID              {char *fixed_string = sym_tab->capitalize(yytext);
+{NEWLINESTRING} {column = 0;
+                 yyerror("Newline in string");
+                }
+
+{ID}              {char *fixed_string = sym_tab->capitalize(yytext);
                  yylval.pool_p = sym_tab->pool_install(fixed_string);
                  delete fixed_string;
 
                  yylloc.first_line=yylineno;
                  yylloc.first_column=column;
                          column += yyleng;
-                         return T_STRINGCONST;
+                         return T_IDENT;
                 }
 
 [ \t]           {column += 1;}
