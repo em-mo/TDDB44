@@ -35,9 +35,9 @@ FLOAT {FLOAT3}|{FLOAT4}
 FLOAT1 {DIGIT}+"."{DIGIT}*
 FLOAT2 {DIGIT}*"."{DIGIT}+
 FLOAT3 ({FLOAT1}|{FLOAT2}){EPART}?
-FLOAT4 {DIGIT}*{EPART}
+FLOAT4 {DIGIT}+{EPART}
 EPART e[\+-]?{DIGIT}*
-ID [a-z][a-z0-9]*
+ID [_a-z][_a-z0-9]*
 
 STRING '([^'\n]|'')*'
 NEWLINESTRING '([^'\n]|'')*\n
