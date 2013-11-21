@@ -25,9 +25,21 @@ extern YYLTYPE yylloc; // Used for position information, see below.
 /* Your code here.
  * If you want to include any flex declarations, this is where to do it. */
 %x c_comment
+%x p_comment
+LETTER [a-z]
 DIGIT [0-9]
-/* {DIGIT}+"."{DIGIT}*
- ID [a-z][a-z0-9]* */
+
+INTEGER {DIGIT}+
+
+FLOAT {FLOAT3}|{FLOAT4}
+FLOAT1 {DIGIT}+"."{DIGIT}*
+FLOAT2 {DIGIT}*"."{DIGIT}+
+FLOAT3 ({FLOAT1}|{FLOAT2}){EPART}?
+FLOAT4 {DIGIT}*{EPART}
+EPART e[\+-]?{DIGIT}*
+ID [a-z][a-z0-9]*
+
+STRING '([^']|'')*'
 /* Position information is entered into the yylloc variable, so we will be
    able to generate good error messages later in later phases. */
 /* Your code should be entered below the %%. Expressions to handle the 
@@ -121,70 +133,149 @@ DIGIT [0-9]
                          column += yyleng;
                          return T_NOTEQ;	
 				}
-of				{
-				    
+of				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_OF;	
 				}
-if				{return(T_IF);
-				    
+if				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_IF;	
 				}
-do				{
-				    
+do				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_DO;	
 				}
-or				{
-				    
+or				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_OR;	
 				}
-var				{
-				    
+var				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_VAR;	
 				}
-end				{
-				    
+end				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_END;	
 				}
-and				{
-				    
+and				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_AND;	
 				}
-div				{
-				    
+div				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_RDIV;	
 				}
-mod				{
-				    
+mod				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_MOD;	
 				}
-not				{
-				    
+not				{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_NOT;	
 				}
-then				{
-				    
+then			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_THEN;	
 				}
-else				{
-				    
+else			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_ELSE;	
 				}
-const				{
-				    
+const			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_CONST;	
 				}
-array				{
-				    
+array			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_ARRAY;	
 				}
-begin				{
-				    
+begin			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_BEGIN;	
 				}
-while				{
-				    
+while			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_WHILE;	
 				}
-elsif				{
-				    
+elsif			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_ELSIF;	
 				}
-return				{
-				    
+return			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_RETURN;	
 				}
-program				{
-				    
+program			{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_PROGRAM;	
 				}
-function			{
-				    
+function		{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_FUNCTION;	
 				}
-procedure			{
-				    
+procedure		{yylloc.first_line=yylineno;
+ 				 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_PROCEDURE;	
 				}
 
+FLOAT           {yylval.rval = atof(yytext);
+                 yylloc.first_line=yylineno;
+                 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_REALNUM;
+                }
+
+INTEGER         {yylval.ival = atoi(yytext);
+                 yylloc.first_line=yylineno;
+                 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_INTNUM;
+                }
+
+STRING          {char *fixed_string = sym_tab->fix_string(yytext);
+                 yylval.str = sym_tab->pool_install(fixed_string);
+                 delete fixed_string;
+
+                 yylloc.first_line=yylineno;
+                 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_STRINGCONST;
+                }
+
+ID              {char *fixed_string = sym_tab->capitalize(yytext);
+                 yylval.pool_p = sym_tab->pool_install(fixed_string);
+                 delete fixed_string;
+
+                 yylloc.first_line=yylineno;
+                 yylloc.first_column=column;
+                         column += yyleng;
+                         return T_STRINGCONST;
+                }
+
+[ \t]           {column += 1;}
+
+\n              {column = 0;}
 
 \/\/.*$				column = 0; /* Skip single-line comment */
 "/\*"				{
@@ -208,6 +299,29 @@ procedure			{
 				    yyerror("Unterminated comment");
 				    yyterminate();
 				}
+}
+
+"{"               {
+                                    column += yyleng;
+                                    BEGIN(p_comment);
+                                }
+
+<p_comment>
+{
+    "}"           {
+                                    column += yyleng;
+                                    BEGIN(INITIAL);
+                                }
+    "{"           {
+                    column += 1;
+                    yyerror("Suspicious comment");
+                }
+    [^\n]           column++; /* Skip stuff in comments */
+    \n              column = 0; 
+    <<EOF>>         {
+                    yyerror("Unterminated comment");
+                    yyterminate();
+                }
 }
 
 <<EOF>>				yyterminate();
