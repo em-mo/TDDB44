@@ -557,10 +557,9 @@ char *symbol_table::fix_string(const char *old_str) {
 /* Decrease the current_level by one. Return sym_index to new environment. */
 sym_index symbol_table::close_scope() {
   /*  Your code here. */
-    for(int i = sym_pos; i > block_table[current_level] + 1; i--){
-        symbol* s = sym_table[i];
+    for(int i = sym_pos; i > current_environment() + 1; i--){
+        symbol* s = get_symbol(i);
         pool_index pool_id = s->id;
-        char* symbol_name = pool_lookup(pool_id);
         hash_index hid = hash(pool_id);
 
         if(hash_table[hid] == i){
@@ -568,7 +567,7 @@ sym_index symbol_table::close_scope() {
         }
     }
     current_level--;
-    return block_table[current_level];
+    return current_environment();
 }
 
 
@@ -658,10 +657,50 @@ void symbol_table::set_symbol_type(const sym_index sym_p,
    
 sym_index symbol_table::install_symbol(const pool_index pool_p,
 				       const sym_type tag) {
-		/* Your code here */
-	
-	    	// Return index to the symbol we just created.
-    		return 0;
+	/* Your code here */
+
+	sym_index sym_id = lookup_symbol(pool_p);
+
+    symbol *sym;
+    if(sym_id == NULL_SYM){
+
+        sym_pos++;
+        if(sym_pos > MAX_SYM){
+            fatal("Error: Symbol table is full");
+        }
+        sym_id = sym_pos;
+
+        switch(tag){
+        case SYM_ARRAY: sym = new array_symbol(pool_p);
+            break;
+        case SYM_CONST: sym = new constant_symbol(pool_p);
+            break;
+        case SYM_FUNC: sym = new function_symbol(pool_p);
+            break;
+        case SYM_PROC: sym = new procedure_symbol(pool_p);
+            break;
+        case SYM_VAR: sym = new variable_symbol(pool_p);
+            break;
+        case SYM_PARAM: sym = new parameter_symbol(pool_p);
+            break;
+        case SYM_NAMETYPE: sym = new nametype_symbol(pool_p);
+            break;
+        case SYM_UNDEF: assert(false);
+        }
+
+        sym->tag = SYM_UNDEF;
+        sym->back_link = hash(pool_p);
+        sym->id = pool_p;
+        sym->hash_link = hash_table[sym->back_link];
+        sym->level = current_level;
+        sym->offset = sym_pos - current_environment();
+
+        symbol_table[sym_pos] = sym;
+        hash_table[sym->back_link] = sym_pos;
+    }
+
+	// Return index to the symbol we just created.
+    return sym_id;
 		
 }
 
@@ -920,7 +959,6 @@ sym_index symbol_table::enter_function(position_information *pos,
 sym_index symbol_table::enter_procedure(position_information *pos,
 					const pool_index pool_p) {
     // Your code here.
-
       return NULL_SYM;
 }
 
