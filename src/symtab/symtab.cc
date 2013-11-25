@@ -557,7 +557,18 @@ char *symbol_table::fix_string(const char *old_str) {
 /* Decrease the current_level by one. Return sym_index to new environment. */
 sym_index symbol_table::close_scope() {
   /*  Your code here. */
-   return NULL_SYM;
+    for(int i = sym_pos; i > block_table[current_level] + 1; i--){
+        symbol* s = sym_table[i];
+        pool_index pool_id = s->id;
+        char* symbol_name = pool_lookup(pool_id);
+        hash_index hid = hash(pool_id);
+
+        if(hash_table[hid] == i){
+            hash_table[hid] = s->hash_link;
+        }
+    }
+    current_level--;
+    return block_table[current_level];
 }
 
 
