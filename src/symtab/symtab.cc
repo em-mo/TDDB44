@@ -580,7 +580,19 @@ sym_index symbol_table::close_scope() {
 sym_index symbol_table::lookup_symbol(const pool_index pool_p) {  //%% OK
     // Your code here. 
 
-	return NULL_SYM;   
+    sym_index found_symbol = NULL_SYM;
+    symbol *sym = get_symbol(hash(pool_p));
+
+    while (sym != NULL)
+    {
+        if (sym->id == pool_p)
+        {
+            found_symbol = sym->id;
+            break;
+        }
+        sym = get_symbol(sym->hash_link);
+    }
+	return found_symbol;
 }
 
 
