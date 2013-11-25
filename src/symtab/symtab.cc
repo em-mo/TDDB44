@@ -1059,6 +1059,7 @@ sym_index symbol_table::enter_procedure(position_information *pos,
 
     proc->ar_size = 0;
     proc->label_nr = get_next_label();
+    proc->type = void_type;
 
     sym_table[sym_p] = proc;
 
