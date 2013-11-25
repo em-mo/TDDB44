@@ -757,7 +757,7 @@ sym_index symbol_table::install_symbol(const pool_index pool_p,
         sym->level = current_level;
         sym->offset = sym_pos - current_environment();
 
-        symbol_table[sym_pos] = sym;
+        sym_table[sym_pos] = sym;
         hash_table[sym->back_link] = sym_pos;
     }
 
