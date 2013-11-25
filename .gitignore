@@ -1,3 +1,4 @@
 *.o
 src/scan/Makefile.dependencies
 src/scan/scanner
+*scanner.cc
