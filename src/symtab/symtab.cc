@@ -549,6 +549,8 @@ char *symbol_table::fix_string(const char *old_str) {
 /* Increase the current_level by one. */
  void symbol_table::open_scope() {
  /*  Your code here. */
+    current_level++;
+    block_table[current_level] = sym_pos;
 }
 
 
