@@ -595,7 +595,7 @@ void symbol_table::open_scope()
 sym_index symbol_table::close_scope()
 {
     /*  Your code here. */
-    for (int i = sym_pos; i > current_environment() + 1; i--)
+    for (int i = sym_pos; i > current_environment(); i--)
     {
         symbol *s = get_symbol(i);
         pool_index pool_id = s->id;
@@ -625,7 +625,7 @@ sym_index symbol_table::lookup_symbol(const pool_index pool_p)    //%% OK
 
     while (sym != NULL)
     {
-        if (sym->id == pool_p)
+        if (pool_compare(sym->id, pool_p))
             break;
         found_symbol = sym->hash_link;
         sym = get_symbol(found_symbol);
@@ -717,6 +717,10 @@ sym_index symbol_table::install_symbol(const pool_index pool_p,
     /* Your code here */
 
     sym_index sym_id = lookup_symbol(pool_p);
+
+    // If the symbol exists at a previous level, install anyway
+    if (sym_id != NULL_SYM && get_symbol(sym_id)->level != current_level)
+        sym_id = NULL_SYM;
 
     symbol *sym;
     if (sym_id == NULL_SYM)
