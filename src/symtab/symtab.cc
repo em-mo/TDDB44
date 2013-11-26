@@ -621,7 +621,7 @@ sym_index symbol_table::lookup_symbol(const pool_index pool_p)    //%% OK
     // Your code here.
 
     sym_index found_symbol = NULL_SYM;
-    symbol *sym = get_symbol(hash(pool_p));
+    symbol *sym = get_symbol(hash_table[hash(pool_p)]);
 
     while (sym != NULL)
     {
@@ -630,7 +630,7 @@ sym_index symbol_table::lookup_symbol(const pool_index pool_p)    //%% OK
             found_symbol = sym->id;
             break;
         }
-        sym = get_symbol(sym->hash_link);
+        sym = get_symbol(hash_table[sym->hash_link]);
     }
     return found_symbol;
 }
@@ -755,7 +755,7 @@ sym_index symbol_table::install_symbol(const pool_index pool_p,
         sym->id = pool_p;
         sym->hash_link = hash_table[sym->back_link];
         sym->level = current_level;
-        sym->offset = sym_pos - current_environment();
+        sym->offset = 0;
 
         sym_table[sym_pos] = sym;
         hash_table[sym->back_link] = sym_pos;
@@ -1059,7 +1059,6 @@ sym_index symbol_table::enter_procedure(position_information *pos,
 
     proc->ar_size = 0;
     proc->label_nr = get_next_label();
-    proc->type = void_type;
 
     sym_table[sym_p] = proc;
 
