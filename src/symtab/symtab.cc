@@ -750,9 +750,7 @@ sym_index symbol_table::install_symbol(const pool_index pool_p,
         case SYM_UNDEF: assert(false);
         }
 
-        sym->tag = SYM_UNDEF;
         sym->back_link = hash(pool_p);
-        sym->id = pool_p;
         sym->hash_link = hash_table[sym->back_link];
         sym->level = current_level;
         sym->offset = 0;
