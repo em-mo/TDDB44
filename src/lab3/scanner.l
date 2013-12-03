@@ -4,7 +4,8 @@
 #include <string.h>
 
 /* This is where you put #include directives as needed for later labs. */
-#include "scanner.hh"
+#include "ast.hh"
+#include "parser.hh"
 
 // Note that the order is important
 // include ast.hh
