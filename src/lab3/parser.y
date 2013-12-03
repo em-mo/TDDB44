@@ -1,5 +1,5 @@
 %{
-#include <iostream.h>
+#include <iostream>
 #include "semantic.hh"
 #include "optimize.hh"
 #include "codegen.hh"
@@ -241,12 +241,12 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 		    else {
 				constant_symbol *con = tmp->get_constant_symbol();
 				if(con->type == integer_type) {
-				    sym_tab->enter_const(pos,
+				    sym_tab->enter_constant(pos,
 							 $1,
 							 con->type,
 							 con->const_value.ival);
 				} else if(con->type == real_type) {
-				    	sym_tab->enter_const(pos,
+				    	sym_tab->enter_constant(pos,
 							 $1,
 							 con->type,
 							 con->const_value.rval);
