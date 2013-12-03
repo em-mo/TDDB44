@@ -1,8 +1,8 @@
 CC	=	g++
-CFLAGS	=	-ggdb3 -Wall -Woverloaded-virtual
+CFLAGS	=	-ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings
 #CC	=	CC
 #CFLAGS	=	-g +p +w
-GCFLAGS =	-g
+GCFLAGS =	-g -Wno-write-strings
 LDFLAGS =	
 DPFLAGS =	-MM
 
