@@ -2,7 +2,7 @@ CC	=	g++
 CFLAGS	=	-ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings
 #CC	=	CC
 #CFLAGS	=	-g +p +w
-GCFLAGS =	-g -Wno-write-strings
+GCFLAGS =	-g -Wno-write-strings -fpermissive
 LDFLAGS =	
 DPFLAGS =	-MM
 
