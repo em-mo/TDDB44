@@ -24,7 +24,7 @@ extern int             no_quads;
 extern int             no_assembler;
 
 #define YYDEBUG 1
-/* #define YYERROR_VERBOSE */            /* Have this defined to give better
+#define YYERROR_VERBOSE            /* Have this defined to give better
                                             error messages. Using it causes
 					    some bison warnings at compiler
 					    compile time, however. Use as you
