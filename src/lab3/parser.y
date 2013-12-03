@@ -559,12 +559,19 @@ comp_stmt	: T_BEGIN stmt_list T_END
 stmt_list	: stmt
 		{
 		    /* Your code here. */
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+		    $$ = new ast_stmt_list(pos, $1);
 		    
 		}
 		| stmt_list T_SEMICOLON stmt
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+		    $$ = new ast_stmt_list(pos, $3, $1);
 		}
 		;
 
