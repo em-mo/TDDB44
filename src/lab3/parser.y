@@ -269,11 +269,21 @@ var_decls	: var_decl
 var_decl	: T_IDENT T_COLON type_id T_SEMICOLON
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+			    	                     @1.first_column);
+				sym_tab->enter_variable(pos, $1, $8->sum_p);
 		}
 		| T_IDENT T_COLON T_ARRAY T_LEFTBRACKET integer T_RIGHTBRACKET T_OF type_id T_SEMICOLON
 		{
 		    /* Your code here. */
+		    position_information *pos =
+				new position_information(@1.first_line,
+			                         @1.first_column);
+				sym_tab->enter_array(pos,
+						 $1,
+						 $8->sym_p,
+						 $5->value);
 		    
 		}
 		| T_IDENT T_COLON T_ARRAY T_LEFTBRACKET const_id T_RIGHTBRACKET T_OF type_id T_SEMICOLON
@@ -445,7 +455,8 @@ proc_decl	: proc_head opt_param_list T_SEMICOLON const_part variable_part
 func_decl	: func_head opt_param_list T_COLON type_id T_SEMICOLON const_part variable_part
 		{
 		    /* Your code here. */
-		    
+		    $$ = $1;
+		    sym_tab->set_symbol_type($1->sym_p, $5->sym_p);
 		}
 		;
 
