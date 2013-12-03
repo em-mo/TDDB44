@@ -272,7 +272,7 @@ var_decl	: T_IDENT T_COLON type_id T_SEMICOLON
 		    position_information *pos =
 				new position_information(@1.first_line,
 			    	                     @1.first_column);
-				sym_tab->enter_variable(pos, $1, $8->sum_p);
+				sym_tab->enter_variable(pos, $1, $3->sym_p);
 		}
 		| T_IDENT T_COLON T_ARRAY T_LEFTBRACKET integer T_RIGHTBRACKET T_OF type_id T_SEMICOLON
 		{
@@ -658,12 +658,15 @@ lvariable	: lvar_id
 rvariable	: rvar_id
 		{
 		    /* Your code here. */
+		    $$ = $1;
 		    
 		}
  		| array_id T_LEFTBRACKET expr T_RIGHTBRACKET
 		{
 		    /* Your code here. */
-		    
+		    $$ = new ast_indexed($1->pos,
+					 $1,
+					 $3);
 		}
                  
 		;
@@ -685,7 +688,13 @@ elsif_list	: elsif_list elsif
 elsif		: T_ELSIF expr T_THEN stmt_list
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+			                         @1.first_column);
+
+				ast_elsif *elsif = new ast_elsif(pos, $2, $4);
+
+			$$ = new ast_elsif_list(pos, elsif);
 		}
 		;
 
@@ -693,12 +702,13 @@ elsif		: T_ELSIF expr T_THEN stmt_list
 else_part	: T_ELSE stmt_list
 		{
 		    /* Your code here. */
+		    $$ = $2;
 		    
 		}
 		| /* empty */
 		{
 		    /* Your code here. */
-		    
+		    $$ = NULL;
 		}
 		;
 
