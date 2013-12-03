@@ -198,7 +198,7 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 			new position_information(@1.first_line,
 			                         @1.first_column);
 		    sym_index const_loc = sym_tab->enter_constant(pos, 
-		    						$1, integer_type, $3);
+		    						$1, integer_type, $3->value);
 		}
 		| T_IDENT T_EQ real T_SEMICOLON
                 {
@@ -207,7 +207,7 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 			new position_information(@1.first_line,
 			                         @1.first_column);
 		    sym_index const_loc = sym_tab->enter_constant(pos, 
-		    						$1, real_type, $3);   
+		    						$1, real_type, $3->value);   
 		}
 		| T_IDENT T_EQ T_STRINGCONST T_SEMICOLON
 		{
