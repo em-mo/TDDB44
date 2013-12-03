@@ -586,6 +586,9 @@ sym_index symbol_table::current_environment()
 void symbol_table::open_scope()
 {
     /*  Your code here. */
+    if(current_level == MAX_BLOCK)
+        fatal("Max block level reached");
+
     current_level++;
     block_table[current_level] = sym_pos;
 }
@@ -598,8 +601,8 @@ sym_index symbol_table::close_scope()
     for (int i = sym_pos; i > current_environment(); i--)
     {
         symbol *s = get_symbol(i);
-        pool_index pool_id = s->id;
-        hash_index hid = hash(pool_id);
+        
+        hash_index hid = s->back_link;
 
         if (hash_table[hid] == i)
         {
