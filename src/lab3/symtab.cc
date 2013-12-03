@@ -601,7 +601,6 @@ sym_index symbol_table::close_scope()
     for (int i = sym_pos; i > current_environment(); i--)
     {
         symbol *s = get_symbol(i);
-        
         hash_index hid = s->back_link;
 
         if (hash_table[hid] == i)
@@ -758,6 +757,7 @@ sym_index symbol_table::install_symbol(const pool_index pool_p,
         sym->back_link = hash(pool_p);
         sym->hash_link = hash_table[sym->back_link];
         sym->level = current_level;
+        sym->type = void_type;
         sym->offset = 0;
 
         sym_table[sym_pos] = sym;
