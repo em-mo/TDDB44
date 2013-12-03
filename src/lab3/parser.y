@@ -167,9 +167,15 @@ prog_decl	: prog_head T_SEMICOLON const_part variable_part
 prog_head	: T_PROGRAM T_IDENT
 		{
 		    /* Your code here. */
-		    		    
-		    sym_tab->open_scope();		    
-		    
+		    position_information *pos =
+			new position_information(@1.first_line,
+			                         @1.first_column);
+		    sym_index proc_loc = sym_tab->enter_procedure(pos,
+								  $2);
+		    sym_tab->open_scope();
+
+		    $$ = new ast_procedurehead(pos,
+					       proc_loc);
 		}
 		;
 
@@ -188,12 +194,20 @@ const_decls	: const_decl
 const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+			new position_information(@1.first_line,
+			                         @1.first_column);
+		    sym_index const_loc = sym_tab->enter_constant(pos, 
+		    						$1, integer_type, $3);
 		}
 		| T_IDENT T_EQ real T_SEMICOLON
                 {
 		    /* Your code here. */
-		    
+		 	position_information *pos =
+			new position_information(@1.first_line,
+			                         @1.first_column);
+		    sym_index const_loc = sym_tab->enter_constant(pos, 
+		    						$1, real_type, $3);   
 		}
 		| T_IDENT T_EQ T_STRINGCONST T_SEMICOLON
 		{
@@ -209,8 +223,36 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 
 
 			/* Your code here */		    
+			position_information *pos =
+			new position_information(@1.first_line,
+			                         @1.first_column);
+
+		    
+		    symbol *tmp =
+			sym_tab->get_symbol($3->sym_p);
+
+		    // Make sure it exists. This should belong in a later pass,
+		    // but if we don't do it here and NULL is returned (which
+		    // shouldn't happen if you've done everything right, but
+		    // paranoia never hurts) the compiler would crash.
+		    if(tmp == NULL || tmp->tag != SYM_CONST)
+			type_error(pos) << "bad index in const declaration: "
+				        << yytext << endl << flush;
+		    else {
+				constant_symbol *con = tmp->get_constant_symbol();
+				if(con->type == integer_type) {
+				    sym_tab->enter_const(pos,
+							 $1,
+							 con->type,
+							 con->const_value.ival);
+				} else if(con->type == real_type) {
+				    	sym_tab->enter_const(pos,
+							 $1,
+							 con->type,
+							 con->const_value.rval);
+				}
+			}
 		}
-                
 		;
 
 
@@ -509,7 +551,7 @@ param		: T_IDENT T_COLON type_id
 comp_stmt	: T_BEGIN stmt_list T_END
 		{
 		    /* Your code here. */
-		    
+		    $$ = $2;
 		}
 		;
 
@@ -517,12 +559,19 @@ comp_stmt	: T_BEGIN stmt_list T_END
 stmt_list	: stmt
 		{
 		    /* Your code here. */
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+		    $$ = new ast_stmt_list(pos, $1);
 		    
 		}
 		| stmt_list T_SEMICOLON stmt
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+		    $$ = new ast_stmt_list(pos, $3, $1);
 		}
 		;
 
@@ -530,38 +579,62 @@ stmt_list	: stmt
 stmt		: T_IF expr T_THEN stmt_list elsif_list else_part T_END
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_if(pos, $2, $4, $5, $6);
 		}
 		| T_WHILE expr T_DO stmt_list T_END
 		{
 		    /* Your code here. */
-		    
+		 	position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_while(pos, $2, $4);   
 		}
 		| proc_id T_LEFTPAR opt_expr_list T_RIGHTPAR
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_procedurecall(pos, $1, $3);
 		}
 		| lvariable T_ASSIGN expr
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_assign(pos, $1, $3);
 		}
 		| T_RETURN expr
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_return(pos, $2);
 		}
 		| T_RETURN
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+				new position_information(@1.first_line,
+				                         @1.first_column);
+
+			$$ = new ast_return(pos);
 		}
                  
 		| /* empty */
 		{
 		    /* Your code here. */
-		    
+		    $$ = NULL;
 		}
 		;
 
