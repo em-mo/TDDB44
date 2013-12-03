@@ -506,6 +506,7 @@ func_head	: T_FUNCTION T_IDENT
 opt_param_list	: T_LEFTPAR param_list T_RIGHTPAR
                 {
 		    /* Your code here. */
+            $$ = $2;
 		}
 		| T_LEFTPAR error T_RIGHTPAR
 		{
@@ -514,7 +515,7 @@ opt_param_list	: T_LEFTPAR param_list T_RIGHTPAR
 		| /* empty */
 		{
 		    /* Your code here. */
-		    
+		    $$ = NULL;
 		}
 		;
 
@@ -678,7 +679,7 @@ elsif_list	: elsif_list elsif
 		    position_information *pos =
 			new position_information(@1.first_line,
 			                         @1.first_column);
-		    $$ = new ast_elsif_list(pos, $2, $1);
+			$$ = new ast_elsif_list(pos, $2, $1);
 		}
 		| /* empty */
 		{
