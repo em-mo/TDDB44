@@ -695,9 +695,7 @@ elsif		: T_ELSIF expr T_THEN stmt_list
 				new position_information(@1.first_line,
 			                         @1.first_column);
 
-				ast_elsif *elsif = new ast_elsif(pos, $2, $4);
-
-			$$ = new ast_elsif_list(pos, elsif);
+			$$ = new ast_elsif(pos, $2, $4);
 		}
 		;
 
