@@ -672,12 +672,15 @@ rvariable	: rvar_id
 elsif_list	: elsif_list elsif
 		{
 		    /* Your code here. */
-		    
+		    position_information *pos =
+			new position_information(@1.first_line,
+			                         @1.first_column);
+		    $$ = new ast_elsif_list(pos, $2, $1);
 		}
 		| /* empty */
 		{
 		    /* Your code here. */
-		    
+		    $$ = NULL;
 		}
 		;
 
