@@ -563,7 +563,14 @@ stmt_list	: stmt
 		    position_information *pos =
 				new position_information(@1.first_line,
 				                         @1.first_column);
-		    $$ = new ast_stmt_list(pos, $1);
+			if($1 == NULL)
+			{
+				$$ = NULL;
+			}
+			else
+			{
+		    	$$ = new ast_stmt_list(pos, $1);
+			}
 		    
 		}
 		| stmt_list T_SEMICOLON stmt
@@ -572,7 +579,14 @@ stmt_list	: stmt
 		    position_information *pos =
 				new position_information(@1.first_line,
 				                         @1.first_column);
-		    $$ = new ast_stmt_list(pos, $3, $1);
+			if($3 == NULL)
+			{
+				$$ = $1;
+			}
+			else
+			{
+		 	   $$ = new ast_stmt_list(pos, $3, $1);
+			}
 		}
 		;
 
