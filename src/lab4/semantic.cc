@@ -247,30 +247,39 @@ sym_index ast_mod::type_check() {
    the same way. They all return integer types, 1 = true, 0 = false. */
 sym_index semantic::check_binrel(ast_binaryrelation *node) {
     /* Your code here. */
+    sym_index left_type = node->left->type_check();
+    sym_index right_type = node->right->type_check();
+    if(left_type != right_type){
+        if(left_type == integer_type)
+        {
+            node->left = new ast_cast(node->left->pos, node->left);
+        }    
+        else
+        {
+             node->right = new ast_cast(node->right->pos, node->right);
+        }  
+    }
+    return integer_type;
 }
 
 sym_index ast_equal::type_check() {
     /* Your code here. */
-    type_checker->check_binop1(this);
-    return integer_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_notequal::type_check() {
     /* Your code here. */
-    type_checker->check_binop1(this);
-    return integer_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_lessthan::type_check() {
     /* Your code here. */
-    type_checker->check_binop1(this);
-    return integer_type;
+    return type_checker->check_binrel(this);
 }
 
 sym_index ast_greaterthan::type_check() {
     /* Your code here. */
-    type_checker->check_binop1(this);
-    return integer_type;
+    return type_checker->check_binrel(this);
 }
 
 
