@@ -683,7 +683,10 @@ rvariable	: rvar_id
 					 $1,
 					 $3);
 		}
-                 
+		| array_id T_LEFTBRACKET error T_RIGHTBRACKET
+		{
+			$$ = NULL;
+        }        
 		;
 
 
