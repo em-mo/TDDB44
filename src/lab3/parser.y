@@ -253,6 +253,7 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 				}
 			}
 		}
+		| T_IDENT T_EQ error T_SEMICOLON
 		;
 
 
@@ -600,6 +601,14 @@ stmt		: T_IF expr T_THEN stmt_list elsif_list else_part T_END
 
 			$$ = new ast_if(pos, $2, $4, $5, $6);
 		}
+		| T_IF error T_THEN stmt_list elsif_list else_part T_END
+		{
+			$$ = NULL;
+		}
+		| T_IF expr T_THEN error T_END
+		{
+			$$ = NULL;
+		}
 		| T_WHILE expr T_DO stmt_list T_END
 		{
 		    /* Your code here. */
@@ -609,6 +618,14 @@ stmt		: T_IF expr T_THEN stmt_list elsif_list else_part T_END
 
 			$$ = new ast_while(pos, $2, $4);   
 		}
+		| T_WHILE error T_DO stmt_list T_END
+		{
+		    $$ = NULL;   
+		}
+		| T_WHILE expr T_DO error T_END
+		{
+		    $$ = NULL; 
+		}
 		| proc_id T_LEFTPAR opt_expr_list T_RIGHTPAR
 		{
 		    /* Your code here. */
@@ -617,6 +634,10 @@ stmt		: T_IF expr T_THEN stmt_list elsif_list else_part T_END
 				                         @1.first_column);
 
 			$$ = new ast_procedurecall(pos, $1, $3);
+		}
+		| proc_id T_LEFTPAR error T_RIGHTPAR
+		{
+		    $$ = NULL;
 		}
 		| lvariable T_ASSIGN expr
 		{
