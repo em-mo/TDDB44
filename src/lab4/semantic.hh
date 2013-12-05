@@ -16,7 +16,8 @@ private:
 				   ast_expr_list *);
 public:
     // Compare formal vs. actual parameters in function/procedure calls.
-    void                 check_parameters(ast_id *, ast_expr_list *);
+    void                 check_function_parameters(ast_id *, ast_expr_list *);
+    void                 check_procedure_parameters(ast_id *, ast_expr_list *);
 
     // Initiate type checking of a block of code.
     void                 do_typecheck(symbol *, ast_stmt_list *);

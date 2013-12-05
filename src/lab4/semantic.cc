@@ -65,14 +65,24 @@ int semantic::chk_param(ast_id *env,
 
 
 /* Check formal vs. actual parameters at procedure/function calls. */
-void semantic::check_parameters(ast_id *call_id,
+void semantic::check_function_parameters(ast_id *call_id,
 				ast_expr_list *param_list) {
     /* Your code here. */
-    parameter_symbol *formals = sym_tab->get_symbol(call_id->sym_p)->get_parameter_symbol();
+
+    function_symbol *func = sym_tab->get_symbol(call_id->sym_p)->get_function_symbol();
+    parameter_symbol *formals = func->last_parameter;
     chk_param(call_id, formals, param_list);
 }
 
+/* Check formal vs. actual parameters at procedure/function calls. */
+void semantic::check_procedure_parameters(ast_id *call_id,
+                ast_expr_list *param_list) {
+    /* Your code here. */
 
+    procedure_symbol *proc = sym_tab->get_symbol(call_id->sym_p)->get_procedure_symbol();
+    parameter_symbol *formals = proc->last_parameter;
+    chk_param(call_id, formals, param_list);
+}
 
 /* We overload this method for the various ast_node subclasses that can
    appear in the AST. By use of virtual (dynamic) methods, we ensure that
@@ -309,7 +319,7 @@ sym_index ast_greaterthan::type_check() {
 
 sym_index ast_procedurecall::type_check() {
     /* Your code here. */
-    type_checker->check_parameters(id, parameter_list);
+    type_checker->check_procedure_parameters(id, parameter_list);
     return void_type;
 }
 
@@ -400,7 +410,7 @@ sym_index ast_return::type_check() {
 
 sym_index ast_functioncall::type_check() {
     /* Your code here. */
-    type_checker->check_parameters(id, parameter_list);
+    type_checker->check_function_parameters(id, parameter_list);
     if (type == void_type)
         type_error(pos) << "Functions must have a return value.\n";
     return type;
