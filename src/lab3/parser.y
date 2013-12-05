@@ -253,6 +253,9 @@ const_decl	: T_IDENT T_EQ integer T_SEMICOLON
 				}
 			}
 		}
+		| T_IDENT T_EQ real error
+		| T_IDENT T_EQ integer error
+		| T_IDENT T_EQ const_id error
 		| T_IDENT T_EQ error T_SEMICOLON
 		;
 
@@ -707,7 +710,7 @@ rvariable	: rvar_id
 		| array_id T_LEFTBRACKET error T_RIGHTBRACKET
 		{
 			$$ = NULL;
-        }        
+		}
 		;
 
 
