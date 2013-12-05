@@ -45,10 +45,12 @@ int semantic::chk_param(ast_id *env,
     }
     else if (formals == NULL && actuals != NULL)
     {
+        type_error(env->pos) << "Too many arguments.\n";
         return 0;
     }
     else if (formals != NULL && actuals == NULL)
     {
+        type_error(env->pos) << "Too few arguments.\n";
         return 0;
     }
     else if (formals->type == actuals->last_expr->type)
@@ -56,6 +58,8 @@ int semantic::chk_param(ast_id *env,
         chk_param(env, formals->preceding, actuals->preceding);
     }
 
+
+    type_error(env->pos) << "Actual arguments are not matching the formal arguments.\n";
     return 0;
 }
 
@@ -64,7 +68,8 @@ int semantic::chk_param(ast_id *env,
 void semantic::check_parameters(ast_id *call_id,
 				ast_expr_list *param_list) {
     /* Your code here. */
-    
+    parameter_symbol *formals = sym_tab->get_symbol(call_id->sym_p)->get_parameter_symbol();
+    chk_param(call_id, formals, param_list);
 }
 
 
@@ -275,9 +280,9 @@ sym_index ast_assign::type_check() {
     rType = rhs->type_check();
 
     if (lType == integer_type && rType == real_type)
-        type_error(pos) << "cannot assign real to integer";
+        type_error(pos) << "Cannot assign real to integer.\n";
     else if (lType == void_type || rType == void_type)
-        type_error(pos) << "void cannot be in an assignment";
+        type_error(pos) << "Void cannot be in an assignment.\n";
     else if (lType == real_type && rType == integer_type)
         rhs = new ast_cast(rhs->pos, rhs);
 
@@ -355,6 +360,8 @@ sym_index ast_return::type_check() {
 sym_index ast_functioncall::type_check() {
     /* Your code here. */
     type_checker->check_parameters(id, parameter_list);
+    if (type == void_type)
+        type_error(pos) << "Functions must have a return value.\n";
     return type;
 }
 
@@ -366,7 +373,7 @@ sym_index ast_uminus::type_check() {
 sym_index ast_not::type_check() {
     /* Your code here. */
     if (expr->type_check() != integer_type)
-        type_error(pos) << "logical not operand must be of type integer";
+        type_error(pos) << "Logical not operand must be of type integer.\n";
     return integer_type;
 }
 
