@@ -140,8 +140,6 @@ sym_index ast_indexed::type_check() {
     return id->type_check();
 }
 
-
-
 /* This convenience function is used to type check all binary operations
    in which implicit casting of integer to real is done: plus, minus,
    multiplication. We synthesize type information as well. */   
@@ -249,37 +247,30 @@ sym_index ast_mod::type_check() {
    the same way. They all return integer types, 1 = true, 0 = false. */
 sym_index semantic::check_binrel(ast_binaryrelation *node) {
     /* Your code here. */
-    sym_index left_type = node->left->type_check();
-    sym_index rigth_type = node->right->type_check();
-    if(left_type != rigth_type){
-        type_error(node->pos) << "Operands must be of the same type\n";
-    }
-    return integer_type;
-    
 }
 
 sym_index ast_equal::type_check() {
     /* Your code here. */
-    return type_checker->check_binrel(this);
-    
+    type_checker->check_binop1(this);
+    return integer_type;
 }
 
 sym_index ast_notequal::type_check() {
     /* Your code here. */
-    return type_checker->check_binrel(this);
-    
+    type_checker->check_binop1(this);
+    return integer_type;
 }
 
 sym_index ast_lessthan::type_check() {
     /* Your code here. */
-    return type_checker->check_binrel(this);
-    
+    type_checker->check_binop1(this);
+    return integer_type;
 }
 
 sym_index ast_greaterthan::type_check() {
     /* Your code here. */
-    return type_checker->check_binrel(this);
-    
+    type_checker->check_binop1(this);
+    return integer_type;
 }
 
 
