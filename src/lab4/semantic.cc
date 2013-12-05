@@ -39,8 +39,24 @@ int semantic::chk_param(ast_id *env,
 			parameter_symbol *formals,
 			ast_expr_list *actuals) {
     /* Your code here. */
-    return 1;
-    
+    if (formals == NULL && actuals == NULL)
+    {
+        return 1;
+    }
+    else if (formals == NULL && actuals != NULL)
+    {
+        return 0;
+    }
+    else if (formals != NULL && actuals == NULL)
+    {
+        return 0;
+    }
+    else if (formals->type == actuals->last_expr->type)
+    {
+        chk_param(env, formals->preceding, actuals->preceding);
+    }
+
+    return 0;
 }
 
 
@@ -247,14 +263,25 @@ sym_index ast_greaterthan::type_check() {
 
 sym_index ast_procedurecall::type_check() {
     /* Your code here. */
-    
+    type_checker->check_parameters(id, parameter_list);
     return void_type;
 }
 
 
 sym_index ast_assign::type_check() {
     /* Your code here. */
-    return void_type;
+    int lType, rType;
+    lType = lhs->type_check();
+    rType = rhs->type_check();
+
+    if (lType == integer_type && rType == real_type)
+        type_error(pos) << "cannot assign real to integer";
+    else if (lType == void_type || rType == void_type)
+        type_error(pos) << "void cannot be in an assignment";
+    else if (lType == real_type && rType == integer_type)
+        rhs = new ast_cast(rhs->pos, rhs);
+
+    return lType;
     
 }
 
@@ -273,6 +300,10 @@ sym_index ast_while::type_check() {
 
 sym_index ast_if::type_check() {
     /* Your code here. */
+    condition->type_check();
+    body->type_check();
+    elsif_list->type_check();
+    else_body->type_check();
     return void_type;
     
 }
@@ -323,27 +354,28 @@ sym_index ast_return::type_check() {
 
 sym_index ast_functioncall::type_check() {
     /* Your code here. */
-    return void_type;
-    
+    type_checker->check_parameters(id, parameter_list);
+    return type;
 }
 
 sym_index ast_uminus::type_check() {
     /* Your code here. */
-    return void_type;
-    
+    return expr->type_check();
 }
 
 sym_index ast_not::type_check() {
     /* Your code here. */
-    return void_type;
-       
+    if (expr->type_check() != integer_type)
+        type_error(pos) << "logical not operand must be of type integer";
+    return integer_type;
 }
 
 
 sym_index ast_elsif::type_check() {
     /* Your code here. */
+    condition->type_check();
+    body->type_check();
     return void_type;
-        
 }
 
 
