@@ -104,7 +104,7 @@ sym_index ast_expr_list::type_check() {
     /* Your code here. */
     if(preceding != NULL)
         preceding->type_check();
-    if(last_stmt != NULL)
+    if(last_expr != NULL)
         last_expr->type_check();
     return void_type;
 }
@@ -116,8 +116,8 @@ sym_index ast_elsif_list::type_check() {
     /* Your code here. */
     if(preceding != NULL)
         preceding->type_check();
-    if(last_stmt != NULL)
-        last_eslif->type_check();
+    if(last_elsif != NULL)
+        last_elsif->type_check();
     return void_type;
 }
 
@@ -137,7 +137,7 @@ sym_index ast_indexed::type_check() {
     if(index->type_check() != integer_type){
         type_error(index->pos) << "Array index must be of type integer\n";
     }
-    return id->type_check;
+    return id->type_check();
 }
 
 
@@ -149,8 +149,8 @@ sym_index semantic::check_binop1(ast_binaryoperation *node) {
     /* Your code here. You don't have to use this method, but it might be
        convenient. */
     sym_index left_type = node->left->type_check();
-    sym_index rigth_type = node->right->type_check();
-    if(left_type != rigth_type){
+    sym_index right_type = node->right->type_check();
+    if(left_type != right_type){
         if(left_type == integer_type)
         {
             node->left = new ast_cast(node->left->pos, node->left);
@@ -166,34 +166,34 @@ sym_index semantic::check_binop1(ast_binaryoperation *node) {
 
 sym_index ast_add::type_check() {
     /* Your code here. */
-    return check_binop1(this);
+    return type_checker->check_binop1(this);
     
 }
 
 sym_index ast_sub::type_check() {
     /* Your code here. */
-    return check_binop1(this);
+    return type_checker->check_binop1(this);
     
 }
 
 sym_index ast_mult::type_check() {
     /* Your code here. */
-    return check_binop1(this);
+    return type_checker->check_binop1(this);
     
 }
 
 
 sym_index ast_divide::type_check() {
     /* Your code here. */
-    sym_index left_type = node->left->type_check();
-    sym_index rigth_type = node->right->type_check();
+    sym_index left_type = left->type_check();
+    sym_index right_type = right->type_check();
     if(left_type == integer_type)
     {
-        node->left = new ast_cast(node->left->pos, node->left);
+        left = new ast_cast(left->pos, left);
     }    
     if(right_type == integer_type)
     {
-         node->right = new ast_cast(node->right->pos, node->right);
+         right = new ast_cast(right->pos, right);
     } 
     return real_type;
      
@@ -221,25 +221,25 @@ sym_index semantic::check_binop2(ast_binaryoperation *node, char *s) {
 
 sym_index ast_or::type_check() {
     /* Your code here. */
-    return check_binop2(this, "OR");
+    return type_checker->check_binop2(this, "OR");
     
 }
 
 sym_index ast_and::type_check() {
     /* Your code here. */
-    return check_binop2(this, "AND");
+    return type_checker->check_binop2(this, "AND");
         
 }
 
 sym_index ast_idiv::type_check() {
     /* Your code here. */
-    return check_binop2(this, "IDIV");
+    return type_checker->check_binop2(this, "IDIV");
         
 }
 
 sym_index ast_mod::type_check() {
     /* Your code here. */
-    return check_binop2(this, "MOD");
+    return type_checker->check_binop2(this, "MOD");
         
 }
 
@@ -252,7 +252,7 @@ sym_index semantic::check_binrel(ast_binaryrelation *node) {
     sym_index left_type = node->left->type_check();
     sym_index rigth_type = node->right->type_check();
     if(left_type != rigth_type){
-        type_error(node->pos) << "Operands must be of the same type\n"
+        type_error(node->pos) << "Operands must be of the same type\n";
     }
     return integer_type;
     
@@ -260,25 +260,25 @@ sym_index semantic::check_binrel(ast_binaryrelation *node) {
 
 sym_index ast_equal::type_check() {
     /* Your code here. */
-    return check_binrel(this);
+    return type_checker->check_binrel(this);
     
 }
 
 sym_index ast_notequal::type_check() {
     /* Your code here. */
-    return check_binrel(this);
+    return type_checker->check_binrel(this);
     
 }
 
 sym_index ast_lessthan::type_check() {
     /* Your code here. */
-    return check_binrel(this);
+    return type_checker->check_binrel(this);
     
 }
 
 sym_index ast_greaterthan::type_check() {
     /* Your code here. */
-    return check_binrel(this);
+    return type_checker->check_binrel(this);
     
 }
 
