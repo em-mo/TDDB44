@@ -33,12 +33,13 @@ void semantic::do_typecheck(symbol *env, ast_stmt_list *body) {
     }
 }
 
-
+int counter = 0;
 /* Compare formal vs. actual parameters recursively. */
 int semantic::chk_param(ast_id *env,
 			parameter_symbol *formals,
 			ast_expr_list *actuals) {
     /* Your code here. */
+    ++counter;
     if (formals == NULL && actuals == NULL)
     {
         return 1;
@@ -58,7 +59,7 @@ int semantic::chk_param(ast_id *env,
         return chk_param(env, formals->preceding, actuals->preceding);
     }
     else
-    {
+    {   cout << "counter " << counter << " formals type " << formals->type << " actuals type " << actuals->last_expr->type << endl;
         type_error(env->pos) << "Actual arguments are not matching the formal arguments.\n";
         return 0;    
     }
@@ -70,9 +71,10 @@ int semantic::chk_param(ast_id *env,
 void semantic::check_function_parameters(ast_id *call_id,
 				ast_expr_list *param_list) {
     /* Your code here. */
-
+    counter = 0;
     function_symbol *func = sym_tab->get_symbol(call_id->sym_p)->get_function_symbol();
     parameter_symbol *formals = func->last_parameter;
+    param_list->type_check();
     chk_param(call_id, formals, param_list);
 }
 
@@ -80,7 +82,7 @@ void semantic::check_function_parameters(ast_id *call_id,
 void semantic::check_procedure_parameters(ast_id *call_id,
                 ast_expr_list *param_list) {
     /* Your code here. */
-
+    counter = 0;
     procedure_symbol *proc = sym_tab->get_symbol(call_id->sym_p)->get_procedure_symbol();
     parameter_symbol *formals = proc->last_parameter;
     chk_param(call_id, formals, param_list);
