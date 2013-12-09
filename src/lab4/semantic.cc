@@ -33,7 +33,6 @@ void semantic::do_typecheck(symbol *env, ast_stmt_list *body) {
     }
 }
 
-int counter = 0;
 /* Compare formal vs. actual parameters recursively. */
 int semantic::chk_param(ast_id *env,
 			parameter_symbol *formals,
@@ -71,10 +70,12 @@ int semantic::chk_param(ast_id *env,
 void semantic::check_function_parameters(ast_id *call_id,
 				ast_expr_list *param_list) {
     /* Your code here. */
-    counter = 0;
     function_symbol *func = sym_tab->get_symbol(call_id->sym_p)->get_function_symbol();
     parameter_symbol *formals = func->last_parameter;
-    param_list->type_check();
+    if (param_list != NULL)
+    {
+        param_list->type_check();
+    }
     chk_param(call_id, formals, param_list);
 }
 
@@ -82,9 +83,12 @@ void semantic::check_function_parameters(ast_id *call_id,
 void semantic::check_procedure_parameters(ast_id *call_id,
                 ast_expr_list *param_list) {
     /* Your code here. */
-    counter = 0;
     procedure_symbol *proc = sym_tab->get_symbol(call_id->sym_p)->get_procedure_symbol();
     parameter_symbol *formals = proc->last_parameter;
+    if (param_list != NULL)
+    {
+        param_list->type_check();
+    }
     chk_param(call_id, formals, param_list);
 }
 
@@ -192,8 +196,10 @@ sym_index semantic::check_binop1(ast_binaryoperation *node) {
         {
              node->right = new ast_cast(node->right->pos, node->right);
         }  
+        node->type = real_type;
         return real_type; 
     }
+    node->type = left_type;
     return left_type;
 }
 
@@ -228,6 +234,7 @@ sym_index ast_divide::type_check() {
     {
          right = new ast_cast(right->pos, right);
     } 
+    type = real_type;
     return real_type;
      
 }
@@ -248,6 +255,8 @@ sym_index semantic::check_binop2(ast_binaryoperation *node, char *s) {
     if(node->right->type_check() != integer_type){
         type_error(node->right->pos) << "Right operand of " << s << " must be of type integer\n";
     }
+        node->type = integer_type;
+
     return integer_type;
     
 }
@@ -294,6 +303,7 @@ sym_index semantic::check_binrel(ast_binaryrelation *node) {
              node->right = new ast_cast(node->right->pos, node->right);
         }  
     }
+    node->type = integer_type;
     return integer_type;
 }
 
@@ -340,7 +350,6 @@ sym_index ast_assign::type_check() {
         type_error(pos) << "Void cannot be in an assignment.\n";
     else if (lType == real_type && rType == integer_type)
         rhs = new ast_cast(rhs->pos, rhs);
-
     return lType;
     
 }
