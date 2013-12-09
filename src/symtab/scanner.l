@@ -180,7 +180,7 @@ and				{yylloc.first_line=yylineno;
 div				{yylloc.first_line=yylineno;
  				 yylloc.first_column=column;
                          column += yyleng;
-                         return T_RDIV;	
+                         return T_IDIV;	
 				}
 mod				{yylloc.first_line=yylineno;
  				 yylloc.first_column=column;
