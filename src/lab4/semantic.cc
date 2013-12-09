@@ -38,7 +38,6 @@ int semantic::chk_param(ast_id *env,
 			parameter_symbol *formals,
 			ast_expr_list *actuals) {
     /* Your code here. */
-    ++counter;
     if (formals == NULL && actuals == NULL)
     {
         return 1;
@@ -58,7 +57,7 @@ int semantic::chk_param(ast_id *env,
         return chk_param(env, formals->preceding, actuals->preceding);
     }
     else
-    {   cout << "counter " << counter << " formals type " << formals->type << " actuals type " << actuals->last_expr->type << endl;
+    {
         type_error(env->pos) << "Actual arguments are not matching the formal arguments.\n";
         return 0;    
     }
