@@ -55,12 +55,14 @@ int semantic::chk_param(ast_id *env,
     }
     else if (formals->type == actuals->last_expr->type)
     {
-        chk_param(env, formals->preceding, actuals->preceding);
+        return chk_param(env, formals->preceding, actuals->preceding);
     }
-
-
-    type_error(env->pos) << "Actual arguments are not matching the formal arguments.\n";
-    return 0;
+    else
+    {
+        type_error(env->pos) << "Actual arguments are not matching the formal arguments.\n";
+        return 0;    
+    }
+    
 }
 
 
