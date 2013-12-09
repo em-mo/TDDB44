@@ -360,8 +360,10 @@ sym_index ast_if::type_check() {
     /* Your code here. */
     condition->type_check();
     body->type_check();
-    elsif_list->type_check();
-    else_body->type_check();
+    if(elsif_list != NULL){
+        elsif_list->type_check();
+        else_body->type_check();
+    }
     return void_type;
     
 }
