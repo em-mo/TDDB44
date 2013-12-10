@@ -125,8 +125,10 @@ void ast_indexed::optimize()
 {
     /* Your code here. */
     index->optimize();
+    index = optimizer->fold_constants(index);
 }
 
+<<<<<<< HEAD
 
 bool ast_optimizer::is_constant(ast_expression *node)
 {
@@ -250,6 +252,9 @@ int ast_optimizer::do_operation_integer(ast_binaryoperation *node)
     }
 }
 
+=======
+  
+>>>>>>> d4f2fac2c983db98fd149a7a2aac2863c3909d60
 /* This convenience method is used to apply constant folding to all
    binary operations. It returns either the resulting optimized node or the
    original node if no optimization could be performed. */
@@ -278,45 +283,60 @@ ast_expression *ast_optimizer::fold_constants(ast_expression *node)
 
 }
 
+void ast_optimizer::optimize_binop(ast_binaryoperation *node)
+{
+    node->left->optimize();
+    node->right->optimize();
+    node->left = optimizer->fold_constants(node->left);
+    node->right = optimizer->fold_constants(node->right);
+}
 
 void ast_add::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_sub::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_mult::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_divide::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_or::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_and::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_idiv::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_mod::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 
@@ -353,59 +373,84 @@ void ast_greaterthan::optimize()
 void ast_procedurecall::optimize()
 {
     /* Your code here. */
+    parameter_list->optimize();
 }
 
 
 void ast_assign::optimize()
 {
     /* Your code here. */
-
+    rhs->optimize();
+    rhs = optimizer->fold_constants(rhs);
 }
 
 
 void ast_while::optimize()
 {
     /* Your code here. */
+    condition->optimize();
+    condition = optimizer->fold_constants(condition);
 
+    body->optimize();
 }
 
 
 void ast_if::optimize()
 {
     /* Your code here. */
+    condition->optimize();
+    condition = optimizer->fold_constants(condition);
 
+    body->optimize();
+
+    if(elsif_list != NULL)
+    {
+      elsif_list->optimize();
+    }
+
+    if(else_body != NULL)
+    {
+      else_body->optimize();
+    }
 }
 
 
 void ast_return::optimize()
 {
     /* Your code here. */
-
+    value->optimize();
+    value = optimizer->fold_constants(value);
 }
 
 
 void ast_functioncall::optimize()
 {
     /* Your code here. */
+    parameter_list->optimize();
 }
 
 void ast_uminus::optimize()
 {
     /* Your code here. */
-
+    expr->optimize();
+    expr = optimizer->fold_constants(expr);
 }
 
 void ast_not::optimize()
 {
     /* Your code here. */
-
+    expr->optimize();
+    expr = optimizer->fold_constants(expr);
 }
 
 
 void ast_elsif::optimize()
 {
     /* Your code here. */
+    condition->optimize();
+    condition = optimizer->fold_constants(condition);
 
+    body->optimize();
 }
 
 
