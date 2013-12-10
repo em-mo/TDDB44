@@ -36,6 +36,16 @@ public:
     // so the ast_* nodes can access it. Another solution would be to make it
     // a static method in the optimize.cc file... A matter of preference.
     ast_expression *fold_constants(ast_expression *);
+
+private:
+    bool is_constant(ast_expression *);
+    bool is_foldable(ast_expression *);
+    bool is_real(ast_expression *);
+    float get_float(ast_expression *);
+    int get_integer(ast_expression *);
+    float do_operation_float(ast_binaryoperation *);
+    int do_operation_integer(ast_binaryoperation *);
+
 };
 
 
