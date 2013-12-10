@@ -128,7 +128,6 @@ void ast_indexed::optimize()
     index = optimizer->fold_constants(index);
 }
 
-<<<<<<< HEAD
 
 bool ast_optimizer::is_constant(ast_expression *node)
 {
@@ -252,9 +251,6 @@ int ast_optimizer::do_operation_integer(ast_binaryoperation *node)
     }
 }
 
-=======
-  
->>>>>>> d4f2fac2c983db98fd149a7a2aac2863c3909d60
 /* This convenience method is used to apply constant folding to all
    binary operations. It returns either the resulting optimized node or the
    original node if no optimization could be performed. */

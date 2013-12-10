@@ -36,7 +36,7 @@ public:
     // so the ast_* nodes can access it. Another solution would be to make it
     // a static method in the optimize.cc file... A matter of preference.
     ast_expression *fold_constants(ast_expression *);
-<<<<<<< HEAD
+    void optimize_binop(ast_binaryoperation *node);
 
 private:
     bool is_constant(ast_expression *);
@@ -46,10 +46,8 @@ private:
     int get_integer(ast_expression *);
     float do_operation_float(ast_binaryoperation *);
     int do_operation_integer(ast_binaryoperation *);
+    
 
-=======
-    void optimize_binop(ast_binaryoperation *node);
->>>>>>> d4f2fac2c983db98fd149a7a2aac2863c3909d60
 };
 
 
