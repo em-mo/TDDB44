@@ -328,6 +328,14 @@ void ast_optimizer::optimize_binop(ast_binaryoperation *node)
     node->right = optimizer->fold_constants(node->right);
 }
 
+void ast_optimizer::optimize_binrel(ast_binaryrelation *node)
+{
+    node->left->optimize();
+    node->right->optimize();
+    node->left = optimizer->fold_constants(node->left);
+    node->right = optimizer->fold_constants(node->right);
+}
+
 void ast_add::optimize()
 {
     /* Your code here. */
@@ -382,25 +390,25 @@ void ast_mod::optimize()
 void ast_equal::optimize()
 {
     /* Your code here. */
-
+    optimizer->optimize_binrel(this);
 }
 
 void ast_notequal::optimize()
 {
     /* Your code here. */
-
+    optimizer->optimize_binrel(this);  
 }
 
 void ast_lessthan::optimize()
 {
     /* Your code here. */
-
+    optimizer->optimize_binrel(this);
 }
 
 void ast_greaterthan::optimize()
 {
     /* Your code here. */
-
+    optimizer->optimize_binrel(this);
 }
 
 

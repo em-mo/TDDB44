@@ -37,7 +37,7 @@ public:
     // a static method in the optimize.cc file... A matter of preference.
     ast_expression *fold_constants(ast_expression *);
     void optimize_binop(ast_binaryoperation *node);
-
+    void optimize_binrel(ast_binaryrelation *node);
 private:
     int is_binrel(ast_expression *);
     bool is_constant(ast_expression *);
