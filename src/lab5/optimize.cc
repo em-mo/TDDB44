@@ -83,14 +83,20 @@ void ast_stmt_list::optimize() {
 /* Optimize a list of expressions. */
 void ast_expr_list::optimize() {
     /* Your code here. */
-    
+    if(preceding != NULL)
+  preceding->optimize();
+    if(last_expr != NULL)
+  last_expr->optimize();
 }
 
 
 /* Optimize an elsif list. */
 void ast_elsif_list::optimize() {
     /* Your code here. */
-    
+    if(preceding != NULL)
+  preceding->optimize();
+    if(last_elsif != NULL)
+  last_elsif->optimize();
 }
 
 
