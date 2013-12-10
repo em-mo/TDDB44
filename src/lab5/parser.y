@@ -887,7 +887,7 @@ term		: factor
 		    position_information *pos =
 			new position_information(@1.first_line,
 			                         @1.first_column);
-		    $$ = new ast_equal(pos, $1, $3);
+		    $$ = new ast_and(pos, $1, $3);
 		}
 		| term T_MUL factor
 		{

@@ -39,6 +39,7 @@ public:
     void optimize_binop(ast_binaryoperation *node);
 
 private:
+    int is_binrel(ast_expression *);
     bool is_constant(ast_expression *);
     bool is_foldable(ast_expression *);
     bool is_real(ast_expression *);
@@ -46,7 +47,7 @@ private:
     int get_integer(ast_expression *);
     float do_operation_float(ast_binaryoperation *);
     int do_operation_integer(ast_binaryoperation *);
-    
+    int do_operation_relation(ast_binaryrelation *);
 
 };
 

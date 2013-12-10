@@ -41,7 +41,19 @@ int ast_optimizer::is_binop(ast_expression *node)
     }
 }
 
-
+int ast_optimizer::is_binrel(ast_expression *node)
+{
+    switch (node->tag)
+    {
+    case AST_GREATERTHAN:
+    case AST_LESSTHAN:
+    case AST_EQUAL:
+    case AST_NOTEQUAL:
+        return 1;
+    default:
+        return 0;
+    }
+}
 
 /* We overload this method for the various ast_node subclasses that can
    appear in the AST. By use of virtual (dynamic) methods, we ensure that
@@ -238,13 +250,31 @@ int ast_optimizer::do_operation_integer(ast_binaryoperation *node)
         return left && right;
     case AST_MULT:
         return left * right;
-    case AST_DIVIDE:
-        assert(false);
-        return left / right;
     case AST_IDIV:
-        assert(false);
+        return left / right;
     case AST_MOD:
         return left % right;
+    default:
+        assert(false);
+        return 0;
+    }
+}
+
+int ast_optimizer::do_operation_relation(ast_binaryrelation *node)
+{
+    int left, right;
+    left = get_integer(node->left);
+    right = get_integer(node->right);
+    switch (node->tag)
+    {
+    case AST_GREATERTHAN:
+        return left > right;
+    case AST_LESSTHAN:
+        return left < right;
+    case AST_EQUAL:
+        return left == right;
+    case AST_NOTEQUAL:
+        return left != right;
     default:
         assert(false);
         return 0;
@@ -275,6 +305,17 @@ ast_expression *ast_optimizer::fold_constants(ast_expression *node)
             }
         }
     }
+    else if(is_binrel(node))
+    {
+        ast_binaryrelation *binrel = dynamic_cast<ast_binaryrelation*>(node);
+        if (is_foldable(binrel->left) && is_foldable(binrel->right))
+        {
+            int value = do_operation_relation(binrel);
+            result = new ast_integer(binrel->left->pos, value);
+        }
+    }
+
+
     return result;
 
 }
