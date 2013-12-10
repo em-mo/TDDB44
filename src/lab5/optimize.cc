@@ -124,11 +124,10 @@ void ast_indexed::optimize()
 {
     /* Your code here. */
     index->optimize();
+    index = optimizer->fold_constants(index);
 }
 
-
-
-
+  
 /* This convenience method is used to apply constant folding to all
    binary operations. It returns either the resulting optimized node or the
    original node if no optimization could be performed. */
@@ -140,45 +139,60 @@ ast_expression *ast_optimizer::fold_constants(ast_expression *node)
 
 }
 
+void ast_optimizer::optimize_binop(ast_binaryoperation *node)
+{
+    node->left->optimize();
+    node->right->optimize();
+    node->left = optimizer->fold_constants(node->left);
+    node->right = optimizer->fold_constants(node->right);
+}
 
 void ast_add::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_sub::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_mult::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_divide::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_or::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_and::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_idiv::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 void ast_mod::optimize()
 {
     /* Your code here. */
+    optimizer->optimize_binop(this);
 }
 
 
