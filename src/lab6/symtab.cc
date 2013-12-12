@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <fstream>
 #include <iostream>
+#include <cstdio>
 #include <ctype.h>
 #include <string.h>
 #include "symtab.hh"
@@ -188,8 +189,19 @@ long symbol_table::get_next_label()
 sym_index symbol_table::gen_temp_var(sym_index type)
 {
     // Your code here.
+    char tmp[10] = {0};
+    tmp[0] = '$';
+    
+    int label = get_next_label();
+    if (label > 1000000)
+        fatal("Too many temporary variables\n");
 
-    return NULL_SYM;
+    snprintf(&tmp[1], 8, "%d", label);
+
+    pool_index pool_p = pool_install(tmp);
+    position_information *pos = new position_information(0, 0);
+    
+    return enter_variable(pos, pool_p, type);
 }
 
 

@@ -1139,7 +1139,7 @@ YY_RULE_SETUP
 {yylloc.first_line=yylineno;
  				 yylloc.first_column=column;
                          column += yyleng;
-                         return T_RDIV;	
+                         return T_IDIV;	
 				}
 	YY_BREAK
 case 27:
