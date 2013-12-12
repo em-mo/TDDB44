@@ -138,28 +138,37 @@ sym_index ast_elsif_list::generate_quads(quad_list &q) {
 sym_index ast_elsif::generate_quads(quad_list& q) {
     USE_Q;
     /* Your code here. */
-    return NULL_SYM;
-    
+    int after = sym_tab->get_next_label();
+    sym_index pos = condition->generate_quads(q); 
+    q += new quadruple(q_jmpf, after, pos, NULL_SYM);
+    body->generate_quads(q);
+    q += new quadruple(q_labl, after, NULL_SYM, NULL_SYM);
+    return NULL_SYM;    
 }
     
 
 sym_index ast_id::generate_quads(quad_list &q) {
     USE_Q;
     /* Your code here. */
-    return NULL_SYM;
+    return sym_p;
     
 }
 
 
 sym_index ast_integer::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
+    sym_index address = sym_tab->gen_temp_var(integer_type);
+    q += new quadruple(q_iload, value, NULL_SYM, address);
+    return address;
     
 } 
 
 
 sym_index ast_real::generate_quads(quad_list &q) {
     /* Your code here. */
+    int iValue = sym_tab->ieee(value);
+    sym_index address = sym_tab->gen_temp_var(real_type);
+    q += new quadruple(q_rload, iValue, NULL_SYM, address);
     return NULL_SYM;
     
 }
@@ -175,21 +184,32 @@ sym_index ast_real::generate_quads(quad_list &q) {
 
 sym_index ast_not::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
+    sym_index pos = expr->generate_quads(q);
+    sym_index address = sym_tab->gen_temp_var(type);
+    q += new quadruple(q_inot, pos, NULL_SYM, address);
+    return address;
     
 }
 
 
 sym_index ast_uminus::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
-    
+    sym_index pos = expr->generate_quads(q);
+    sym_index address = sym_tab->gen_temp_var(type);
+    if(type == integer_type)
+        q += new quadruple(q_iuminus, pos, NULL_SYM, address);
+    else 
+        q += new quadruple(q_ruminus, pos, NULL_SYM, address);
+    return address;
 }
 
 
 sym_index ast_cast::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
+    sym_index pos = expr->generate_quads(q);
+    sym_index address = sym_tab->gen_temp_var(real_type);
+    q += new quadruple(q_itor, pos, NULL_SYM, address);
+    return address;
     
 }
 
