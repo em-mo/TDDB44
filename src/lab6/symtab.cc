@@ -193,7 +193,7 @@ sym_index symbol_table::gen_temp_var(sym_index type)
     tmp[0] = '$';
     
     int label = get_next_label();
-    if (label > 1000000)
+    if (label >= 1000000)
         fatal("Too many temporary variables\n");
 
     snprintf(&tmp[1], 8, "%d", label);
