@@ -144,6 +144,8 @@ public:
     friend class quad_list_iterator;   // Allow the iterator access to private
                                        // data fields in this class.
     friend ostream& operator<<(ostream&, quad_list *);
+
+    sym_index do_binary(quad_list &q, ast_binaryoperation *node, quad_op_type q_operation);
 };
     
     

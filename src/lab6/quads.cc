@@ -151,7 +151,6 @@ sym_index ast_id::generate_quads(quad_list &q) {
     USE_Q;
     /* Your code here. */
     return sym_p;
-    
 }
 
 
@@ -210,14 +209,25 @@ sym_index ast_cast::generate_quads(quad_list &q) {
     sym_index address = sym_tab->gen_temp_var(real_type);
     q += new quadruple(q_itor, pos, NULL_SYM, address);
     return address;
-    
 }
 
+sym_index quad_list::do_binary(quad_list &q, ast_binaryoperation *node, quad_op_type q_operation)
+{
+    sym_index left_pos = node->left->generate_quads(q);
+    sym_index rigth_pos = node->right->generate_quads(q);
+    sym_index address = sym_tab->gen_temp_var(node->left->type);
+    q += new quadruple(q_operation, left_pos, rigth_pos, address);
+    return address;
+}
 
 sym_index ast_add::generate_quads(quad_list &q) {
     /* Your code here. */
+    sym_index type = left->type;
+    if(type == integer_type)
+        q.do_binary(q, this, q_iplus);
+    else
+        q.do_binary(q, this, q_rplus);
     return NULL_SYM;
-        
 }
 				   
 sym_index ast_sub::generate_quads(quad_list &q) {
