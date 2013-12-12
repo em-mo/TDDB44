@@ -430,7 +430,15 @@ sym_index ast_return::generate_quads(quad_list &q) {
 /* Generate quads for an array reference. */
 sym_index ast_indexed::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
+    sym_index index_pos = index->generate_quads(q);
+    sym_index address = sym_tab->gen_temp_var();
+
+    if (type == integer_type)
+        q += new quadruple(q_irindex, id->sym_p, index_pos, address);
+    else
+        q += new quadruple(q_rrindex, id->sym_p, index_pos, address);
+
+    return address;
     
 }
 
