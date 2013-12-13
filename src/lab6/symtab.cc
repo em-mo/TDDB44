@@ -192,11 +192,11 @@ sym_index symbol_table::gen_temp_var(sym_index type)
     char tmp[10] = {0};
     tmp[0] = '$';
     
-    int label = get_next_label();
-    if (label >= 1000000)
+    ++temp_nr;
+    if (temp_nr > 1000000)
         fatal("Too many temporary variables\n");
 
-    snprintf(&tmp[1], 8, "%d", label);
+    snprintf(&tmp[1], 8, "%d", temp_nr);
 
     pool_index pool_p = pool_install(tmp);
     position_information *pos = new position_information(0, 0);

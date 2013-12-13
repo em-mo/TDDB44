@@ -353,23 +353,50 @@ void ast_expr_list::generate_parameter_list(quad_list &q,
 					    parameter_symbol *last_param,
 					    int *nr_params) {
     /* Your code here. */
-    
+
+}
+
+void generate_parameter_list(quad_list &q,
+                        ast_expr_list *last_param,
+                        int *nr_params) {
+    /* Your code here. */
+    if (last_param == NULL)
+        return;
+    else
+    {
+        *nr_params += 1;
+        sym_index res = last_param->last_expr->generate_quads(q);
+        q += new quadruple(q_param, res, NULL_SYM, NULL_SYM);
+
+        generate_parameter_list(q, last_param->preceding, nr_params);
+    }
 }
 
 
 /* Generate quads for a procedure call. */
 sym_index ast_procedurecall::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
-    
+    int nr_params = 0;
+    generate_parameter_list(q, parameter_list, &nr_params);
+    sym_index ret = sym_tab->gen_temp_var(integer_type);
+
+    q += new quadruple(q_call, id->sym_p, nr_params, ret);
+
+    return ret;
 }
  
 
 /* Generate quads for a function call. */
 sym_index ast_functioncall::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
-    
+    int nr_params = 0;
+    generate_parameter_list(q, parameter_list, &nr_params);
+
+    sym_index ret = sym_tab->gen_temp_var(type);
+
+    q += new quadruple(q_call, id->sym_p, nr_params, ret);
+
+    return ret;
 }
 
 
@@ -473,8 +500,20 @@ sym_index ast_if::generate_quads(quad_list &q) {
 /* Generate quads for a return statement. */
 sym_index ast_return::generate_quads(quad_list &q) {
     /* Your code here. */
-    return NULL_SYM;
-    
+    if (value != NULL)
+    {
+        sym_index pos = value->generate_quads(q);
+        if (value->type == integer_type)
+            q += new quadruple(q_ireturn, q.last_label, pos, NULL_SYM);
+        else
+            q += new quadruple(q_rreturn, q.last_label, pos, NULL_SYM);
+        return pos;
+    }
+    else
+    {
+        q += new quadruple(q_ireturn, q.last_label, NULL_SYM, NULL_SYM);
+        return NULL_SYM;
+    }
 }
 
 
@@ -482,7 +521,7 @@ sym_index ast_return::generate_quads(quad_list &q) {
 sym_index ast_indexed::generate_quads(quad_list &q) {
     /* Your code here. */
     sym_index index_pos = index->generate_quads(q);
-    sym_index address = sym_tab->gen_temp_var();
+    sym_index address = sym_tab->gen_temp_var(type);
 
     if (type == integer_type)
         q += new quadruple(q_irindex, id->sym_p, index_pos, address);
