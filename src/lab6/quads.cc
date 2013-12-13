@@ -417,15 +417,56 @@ void ast_elsif::generate_quads_and_jump(quad_list& q, int label) {
    See generate_quads for ast_if for more information. */
 void ast_elsif_list::generate_quads_and_jump(quad_list &q, int label) {
     /* Your code here. */
-    
+    if(preceding != null)    
+        preceding->generate_quads_and_jump(q, label);
+    last_elsif->generate_quads_and_jump(q, label);
 }
 
 
 /* Generate quads for an if statement. */
 sym_index ast_if::generate_quads(quad_list &q) {
     /* Your code here. */
+
+    int end_label, else_label, elsif_label;
+
+    if(elsif_list != NULL)
+        elsif_label = sym_tab->get_next_label();
+    if(else_body != NULL)
+        else_label = sym_tab->get_next_label();
+    end_label = sym_tab->get_next_label();
+
+    pos = condition->generate_quads(q);
+    if(elsif_list != NULL){
+        q += new quadruple(q_jmpf, elsif_label, pos, NULL_SYM);
+    }else if(else_body != NULL){
+        q += new quadruple(q_jmpf, else_label, pos, NULL_SYM);
+    }else{
+        q += new quadruple(q_jmpf, end_label, pos, NULL_SYM);
+    }
+
+    body->generate_quads();
+    //om else finns
+    q += new quadruple(q_jmp, end_label, NULL_SYM, NULL_SYM);
+
+    if(elsif_list != NULL)
+    {
+        q += new quadruple(q_labl, elsif_label, NULL_SYM, NULL_SYM);
+        if(else_body != NULL)
+        {
+            elsif_list->generate_quads_and_jump(q, else_label);
+            q += new quadruple(q_jmp, end_label, NULL_SYM, NULL_SYM);
+        }
+        else if(else_body == NULL){
+            elsif_list->generate_quads_and_jump(q, end_label);
+        }
+    }
+
+    if(else_body != NULL)
+    {
+        q += new quadruple(q_labl, else_label, NULL_SYM, NULL_SYM);
+        else_body->generate_quads();
+    }
     return NULL_SYM;
-    
 }
 
 
