@@ -145,7 +145,8 @@ public:
                                        // data fields in this class.
     friend ostream& operator<<(ostream&, quad_list *);
 
-    sym_index do_binary(quad_list &q, ast_binaryoperation *node, quad_op_type q_operation);
+    sym_index do_binaryop(quad_list &q, ast_binaryoperation *node, quad_op_type q_operation, sym_index type);
+    sym_index do_binaryrel(quad_list &q, ast_binaryrelation *node, quad_op_type q_operation, sym_index type);
 };
     
     
