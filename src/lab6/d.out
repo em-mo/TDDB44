@@ -1,1 +1,62 @@
 #include "diesel_glue.s"
+L4:			! FOO
+		fitos	%f0,%f1
+		fcmpes	%f0,%f1
+		nop
+		fbuge,a	L12
+		mov	0,%o0
+		mov	1,%o0
+L12:
+		tst	%o0
+		be	L6
+		nop
+		set	1,%o0
+		add	%o0,%o1,%o0
+		set	1,%o0
+		fitos	%f0,%f1
+		fsubs	%f0,%f1,%f2
+		ba	L8
+		nop
+L6:
+		fitos	%f0,%f1
+		fcmps	%f0,%f1
+		nop
+		fbe,a	L13
+		mov	0,%o0
+		mov	1,%o0
+L13:
+		tst	%o0
+		be,a	L14
+		mov	1,%o0
+		mov	0,%o0
+		L14:
+		tst	%o0
+		be	L9
+		nop
+		ba	L7
+		nop
+L9:
+		ba	L8
+		nop
+L7:
+		set	0,%o0
+		cmp	%o0,%o1
+		be,a	L15
+		mov	0,%o0
+		mov	1,%o0
+L15:
+		tst	%o0
+		be	L10
+		nop
+		neg	%o0
+		ba	L11
+		nop
+L10:
+		set	7,%o0
+		set	1,%o0
+		fitos	%f0,%f1
+		fadds	%f0,%f1,%f2
+		set	33,%o0
+		ba	L5
+		nop
+L5:

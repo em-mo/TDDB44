@@ -498,7 +498,9 @@ void ast_elsif::generate_quads_and_jump(quad_list &q, int label)
     pos = condition->generate_quads(q);
     q += new quadruple(q_jmpf, elsif_end, pos, NULL_SYM);
 
-    body->generate_quads(q);
+    if (body != NULL)
+        body->generate_quads(q);
+    
     q += new quadruple(q_jmp, label, NULL_SYM, NULL_SYM);
     q += new quadruple(q_labl, elsif_end, NULL_SYM, NULL_SYM);
 }
@@ -544,7 +546,9 @@ sym_index ast_if::generate_quads(quad_list &q)
         q += new quadruple(q_jmpf, end_label, pos, NULL_SYM);
     }
 
-    body->generate_quads(q);
+    if (body != NULL)
+        body->generate_quads(q);
+
     if (elsif_list != NULL || else_body != NULL)
         q += new quadruple(q_jmp, end_label, NULL_SYM, NULL_SYM);
 
