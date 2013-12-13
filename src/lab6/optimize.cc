@@ -446,7 +446,8 @@ void ast_if::optimize()
     condition->optimize();
     condition = optimizer->fold_constants(condition);
 
-    body->optimize();
+    if(body != NULL)
+        body->optimize();
 
     if(elsif_list != NULL)
     {
@@ -495,7 +496,8 @@ void ast_elsif::optimize()
     condition->optimize();
     condition = optimizer->fold_constants(condition);
 
-    body->optimize();
+    if (body != NULL)
+        body->optimize();
 }
 
 
