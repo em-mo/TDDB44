@@ -446,7 +446,8 @@ sym_index ast_not::type_check() {
 sym_index ast_elsif::type_check() {
     /* Your code here. */
     condition->type_check();
-    body->type_check();
+    if(body != NULL)
+        body->type_check();
     return void_type;
 }
 
