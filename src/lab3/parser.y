@@ -460,7 +460,6 @@ func_decl	: func_head opt_param_list T_COLON type_id T_SEMICOLON const_part vari
 		{
 		    /* Your code here. */
 		    $$ = $1;
-		    $1->type = $4->sym_p;
 		    sym_tab->set_symbol_type($1->sym_p, $4->sym_p);
 		}
 		;
