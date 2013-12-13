@@ -369,11 +369,12 @@ sym_index ast_while::type_check() {
 sym_index ast_if::type_check() {
     /* Your code here. */
     condition->type_check();
-    body->type_check();
-    if(elsif_list != NULL){
+    if(body != NULL)
+        body->type_check();
+    if(elsif_list != NULL)
         elsif_list->type_check();
+    if(else_body != NULL)
         else_body->type_check();
-    }
     return void_type;
     
 }
