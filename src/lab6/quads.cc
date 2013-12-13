@@ -442,7 +442,7 @@ void ast_elsif::generate_quads_and_jump(quad_list& q, int label) {
     pos = condition->generate_quads(q);
     q += new quadruple(q_jmpf, elsif_end, pos, NULL_SYM);
 
-    body->generate_quads();
+    body->generate_quads(q);
     q += new quadruple(q_jmp, label, NULL_SYM, NULL_SYM);
     q += new quadruple(q_labl, elsif_end, NULL_SYM, NULL_SYM);
 }
