@@ -180,7 +180,7 @@ sym_index ast_real::generate_quads(quad_list &q)
     int iValue = sym_tab->ieee(value);
     sym_index address = sym_tab->gen_temp_var(real_type);
     q += new quadruple(q_rload, iValue, NULL_SYM, address);
-    return NULL_SYM;
+    return address;
 
 }
 
@@ -221,7 +221,7 @@ sym_index ast_cast::generate_quads(quad_list &q)
 {
     /* Your code here. */
     sym_index pos = expr->generate_quads(q);
-    sym_index address = sym_tab->gen_temp_var(real_type);
+    sym_index address = sym_tab->gen_temp_var(integer_type);
     q += new quadruple(q_itor, pos, NULL_SYM, address);
     return address;
 }
