@@ -525,24 +525,20 @@ sym_index ast_if::generate_quads(quad_list &q)
 {
     /* Your code here. */
 
-    int end_label, else_label, elsif_label;
+    int end_label, next_label;
     sym_index pos;
-    if (elsif_list != NULL)
-        elsif_label = sym_tab->get_next_label();
-    if (else_body != NULL)
-        else_label = sym_tab->get_next_label();
+
+    
+    if (elsif_list != NULL || else_body != NULL)
+        next_label = sym_tab->get_next_label();
+
     end_label = sym_tab->get_next_label();
 
     pos = condition->generate_quads(q);
-    if (elsif_list != NULL)
+    if (elsif_list != NULL || else_body != NULL)
     {
-        q += new quadruple(q_jmpf, elsif_label, pos, NULL_SYM);
-    }
-    else if (else_body != NULL)
-    {
-        q += new quadruple(q_jmpf, else_label, pos, NULL_SYM);
-    }
-    else
+        q += new quadruple(q_jmpf, next_label, pos, NULL_SYM);
+    }else
     {
         q += new quadruple(q_jmpf, end_label, pos, NULL_SYM);
     }
@@ -555,10 +551,12 @@ sym_index ast_if::generate_quads(quad_list &q)
 
     if (elsif_list != NULL)
     {
-        q += new quadruple(q_labl, elsif_label, NULL_SYM, NULL_SYM);
+        q += new quadruple(q_labl, next_label, NULL_SYM, NULL_SYM);
+        next_label = sym_tab->get_next_label();
+        
         if (else_body != NULL)
         {
-            q.start_generate_elsif_list(elsif_list, else_label);
+            q.start_generate_elsif_list(elsif_list, next_label);
             q += new quadruple(q_jmp, end_label, NULL_SYM, NULL_SYM);
         }
         else if (else_body == NULL)
@@ -569,7 +567,8 @@ sym_index ast_if::generate_quads(quad_list &q)
 
     if (else_body != NULL)
     {
-        q += new quadruple(q_labl, else_label, NULL_SYM, NULL_SYM);
+        
+        q += new quadruple(q_labl, next_label, NULL_SYM, NULL_SYM);
         else_body->generate_quads(q);
     }
 
