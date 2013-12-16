@@ -306,37 +306,41 @@ sym_index ast_and::generate_quads(quad_list &q)
 sym_index ast_equal::generate_quads(quad_list &q)
 {
     /* Your code here. */
+    sym_index t = left->type;
     if (type == integer_type)
-        return q.do_binaryrel(q, this, q_ieq, type);
+        return q.do_binaryrel(q, this, q_ieq, t);
     else
-        return q.do_binaryrel(q, this, q_req, type);
+        return q.do_binaryrel(q, this, q_req, t);
 }
 
 sym_index ast_notequal::generate_quads(quad_list &q)
 {
     /* Your code here. */
+    sym_index t = left->type;
     if (type == integer_type)
-        return q.do_binaryrel(q, this, q_ine, type);
+        return q.do_binaryrel(q, this, q_ine, t);
     else
-        return q.do_binaryrel(q, this, q_rne, type);
+        return q.do_binaryrel(q, this, q_rne, t);
 }
 
 sym_index ast_lessthan::generate_quads(quad_list &q)
 {
     /* Your code here. */
+    sym_index t = left->type;
     if (type == integer_type)
-        return q.do_binaryrel(q, this, q_ilt, type);
+        return q.do_binaryrel(q, this, q_ilt, t);
     else
-        return q.do_binaryrel(q, this, q_rlt, type);
+        return q.do_binaryrel(q, this, q_rlt, t);
 }
 
 sym_index ast_greaterthan::generate_quads(quad_list &q)
 {
     /* Your code here. */
+    sym_index t = left->type;
     if (type == integer_type)
-        return q.do_binaryrel(q, this, q_igt, type);
+        return q.do_binaryrel(q, this, q_igt, t);
     else
-        return q.do_binaryrel(q, this, q_rgt, type);
+        return q.do_binaryrel(q, this, q_rgt, t);
 }
 
 
