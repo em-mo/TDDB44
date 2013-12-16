@@ -492,17 +492,11 @@ sym_index ast_while::generate_quads(quad_list &q)
 void ast_elsif::generate_quads_and_jump(quad_list &q, int label)
 {
     /* Your code here. */
-    int elsif_end = sym_tab->get_next_label();
     sym_index pos;
-
     pos = condition->generate_quads(q);
-    q += new quadruple(q_jmpf, elsif_end, pos, NULL_SYM);
-
+    q += new quadruple(q_jmpf, label, pos, NULL_SYM);
     if (body != NULL)
         body->generate_quads(q);
-    
-    q += new quadruple(q_jmp, label, NULL_SYM, NULL_SYM);
-    q += new quadruple(q_labl, elsif_end, NULL_SYM, NULL_SYM);
 }
 
 
@@ -511,11 +505,21 @@ void ast_elsif::generate_quads_and_jump(quad_list &q, int label)
 void ast_elsif_list::generate_quads_and_jump(quad_list &q, int label)
 {
     /* Your code here. */
-
     if (preceding != NULL)
         preceding->generate_quads_and_jump(q, label);
 
-    last_elsif->generate_quads_and_jump(q, label);
+    int elsif_end = sym_tab->get_next_label();
+    last_elsif->generate_quads_and_jump(q, elsif_end);
+    q += new quadruple(q_jmp, label, NULL_SYM, NULL_SYM);
+    q += new quadruple(q_labl, elsif_end, NULL_SYM, NULL_SYM);
+}
+
+void quad_list::start_generate_elsif_list(ast_elsif_list *elsif_list, int label)
+{
+    if(elsif_list->preceding != NULL)
+        elsif_list->preceding->generate_quads_and_jump(*this, label);
+
+    elsif_list->last_elsif->generate_quads_and_jump(*this, label);
 }
 
 
@@ -557,12 +561,12 @@ sym_index ast_if::generate_quads(quad_list &q)
         q += new quadruple(q_labl, elsif_label, NULL_SYM, NULL_SYM);
         if (else_body != NULL)
         {
-            elsif_list->generate_quads_and_jump(q, else_label);
+            q.start_generate_elsif_list(elsif_list, else_label);
             q += new quadruple(q_jmp, end_label, NULL_SYM, NULL_SYM);
         }
         else if (else_body == NULL)
         {
-            elsif_list->generate_quads_and_jump(q, end_label);
+            q.start_generate_elsif_list(elsif_list, end_label);
         }
     }
 
@@ -571,6 +575,8 @@ sym_index ast_if::generate_quads(quad_list &q)
         q += new quadruple(q_labl, else_label, NULL_SYM, NULL_SYM);
         else_body->generate_quads(q);
     }
+
+    q += new quadruple(q_labl, end_label, NULL_SYM, NULL_SYM);
     return NULL_SYM;
 }
 

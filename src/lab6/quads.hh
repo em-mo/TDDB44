@@ -8,7 +8,7 @@
 class ast_expression;
 class ast_binaryoperation;
 class ast_binaryrelation;
-
+class ast_elsif_list;
 
 /* These are all the quads we will be using. The comments show what types
    of arguments they take. Note that 'int' can be either int or real, since
@@ -147,6 +147,7 @@ public:
 
     sym_index do_binaryop(quad_list &q, ast_binaryoperation *node, quad_op_type q_operation, sym_index type);
     sym_index do_binaryrel(quad_list &q, ast_binaryrelation *node, quad_op_type q_operation, sym_index type);
+    void start_generate_elsif_list(ast_elsif_list *elsif_list, int label);
 };
     
     
