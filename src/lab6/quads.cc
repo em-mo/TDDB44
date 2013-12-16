@@ -239,7 +239,7 @@ sym_index quad_list::do_binaryrel(quad_list &q, ast_binaryrelation *node, quad_o
 {
     sym_index left_pos = node->left->generate_quads(q);
     sym_index rigth_pos = node->right->generate_quads(q);
-    sym_index address = sym_tab->gen_temp_var(type);
+    sym_index address = sym_tab->gen_temp_var(integer_type);
 
     q += new quadruple(q_operation, left_pos, rigth_pos, address);
     return address;
@@ -307,7 +307,7 @@ sym_index ast_equal::generate_quads(quad_list &q)
 {
     /* Your code here. */
     sym_index t = left->type;
-    if (type == integer_type)
+    if (t == integer_type)
         return q.do_binaryrel(q, this, q_ieq, t);
     else
         return q.do_binaryrel(q, this, q_req, t);
@@ -317,7 +317,7 @@ sym_index ast_notequal::generate_quads(quad_list &q)
 {
     /* Your code here. */
     sym_index t = left->type;
-    if (type == integer_type)
+    if (t == integer_type)
         return q.do_binaryrel(q, this, q_ine, t);
     else
         return q.do_binaryrel(q, this, q_rne, t);
@@ -327,7 +327,7 @@ sym_index ast_lessthan::generate_quads(quad_list &q)
 {
     /* Your code here. */
     sym_index t = left->type;
-    if (type == integer_type)
+    if (t == integer_type)
         return q.do_binaryrel(q, this, q_ilt, t);
     else
         return q.do_binaryrel(q, this, q_rlt, t);
@@ -337,7 +337,7 @@ sym_index ast_greaterthan::generate_quads(quad_list &q)
 {
     /* Your code here. */
     sym_index t = left->type;
-    if (type == integer_type)
+    if (t == integer_type)
         return q.do_binaryrel(q, this, q_igt, t);
     else
         return q.do_binaryrel(q, this, q_rgt, t);
