@@ -33,7 +33,7 @@ const int FIRST_ARG_OFFSET = 68;
 // 16*4 (dump space) + 4 (old display register) + 6*4 (args) = 92.
 const int MIN_FRAME_SIZE = 92;
 
-// Maximum number of formal parameters allowed. 
+// Maximum number of formal parameters allowed.
 const int MAX_PARAMETERS = 127;
 const int PARAMETER_STACK_SIZE = 128;
 
@@ -46,22 +46,23 @@ class symbol;
 
 
 /* This class generates assembler code for the Sun Sparc architecture. */
-class code_generator {
+class code_generator
+{
 private:
     register_type reg[10][4];                         // Register array.
-    
+
     ofstream      out;                                // Output file stream.
-    
+
     int  align(int);                                  // Align a stack frame.
     void prologue(symbol *);                          // Initialize new env.
     void epilogue(symbol *);                          // Leave env.
     void expand(quad_list *q);                        // Quadlist -> assembler.
     void find(sym_index, int *, int *);               // Get variable/parameter
-                                                      // level & offset.
+    // level & offset.
     void fetch(sym_index, const register_type);       // memory -> register.
     void store(const register_type, sym_index);       // register -> memory.
     void array_address(sym_index, const register_type); // get array base addr.
-    
+
 public:
     // Constructor. Arg = filename of assembler outfile.
     code_generator(const char *);
