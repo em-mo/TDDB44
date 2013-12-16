@@ -2,3 +2,4 @@
 *Makefile.dependencies
 src/scan/scanner
 *scanner.cc
+*d.out
