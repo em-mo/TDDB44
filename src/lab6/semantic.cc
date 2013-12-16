@@ -175,7 +175,8 @@ sym_index ast_indexed::type_check() {
     if(index->type_check() != integer_type){
         type_error(index->pos) << "Array index must be of type integer\n";
     }
-    return id->type_check();
+    type = id->type_check();
+    return type;
 }
 
 /* This convenience function is used to type check all binary operations
