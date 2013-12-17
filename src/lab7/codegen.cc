@@ -140,7 +140,9 @@ void code_generator::epilogue(symbol *old_env)
 void code_generator::find(sym_index sym_p, int *level, int *offset)
 {
     /* Your code here. */
-
+    symbol *sym = sym_tab->get_symbol(sym_p);
+    *level = sym->level;
+    *offset = sym->offset;
 }
 
 
@@ -150,7 +152,34 @@ void code_generator::find(sym_index sym_p, int *level, int *offset)
 void code_generator::fetch(sym_index sym_p, register_type dest)
 {
     /* Your code here. */
+    int level, offset;
+    find(sym_p, &level, &offset);
+    sym_type type = sym_tab->get_symbol_tag(sym_p);
 
+    if (type == SYM_CONST)
+    {
+        constant_symbol *sym = sym_tab->get_symbol(sym_p)->get_constant_symbol();
+        if(dest >= f0)
+        {
+            int value = sym_tab->ieee(sym->const_value.rval);
+            out << "\t\t" << "st" << "\t" << value << ",[%sp+64]," << endl;
+            out << "\t\t" << "ld" << "\t" << "[%sp+64]," << reg[dest] << endl;
+        }
+        else
+            out << "\t\t" << "set" << "\t" << sym->const_value.ival << "," << reg[dest] << endl;
+    }
+    else
+    {
+        if (offset > 0xfffffffffffff)
+        {
+            out << "\t\t" << "set" << "\t" << offset << "%l0" << endl;
+            out << "\t\t" << "ld" << "\t" << "[%g" << level << "-%l0]," << reg[dest] << endl;
+        }
+        else
+        {
+            out << "\t\t" << "ld" << "\t" << "[%g" << level << "-" << offset << "]," << reg[dest] << endl;
+        }
+    }
 }
 
 
@@ -159,7 +188,17 @@ void code_generator::fetch(sym_index sym_p, register_type dest)
 void code_generator::store(register_type src, sym_index sym_p)
 {
     /* Your code here. */
-
+    int level, offset;
+    find(sym_p, &level, &offset);
+    if (offset > 0xfffffffffffff)
+    {
+        out << "\t\t" << "set" << "\t" << offset << "%l0" << endl;
+        out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << "-%l0]," << endl;
+    }
+    else
+    {
+        out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << "-" << offset << "]" << endl;
+    }
 }
 
 
@@ -168,7 +207,9 @@ void code_generator::store(register_type src, sym_index sym_p)
 void code_generator::array_address(sym_index sym_p, register_type dest)
 {
     /* Your code here. */
-
+    int level, offset;
+    find(sym_p, &level, &offset);
+    out << "\t\t" << "sub" << "\t" << "%g" << level << "," << offset << "," << reg[dest] << endl;
 }
 
 

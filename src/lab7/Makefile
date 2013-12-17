@@ -1,5 +1,5 @@
 CC	=	g++
-CFLAGS	=	-ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings
+CFLAGS	=	-ggdb3 -Wall -Woverloaded-virtual -Wno-write-strings -Wno-char-subscripts
 #CC	=	CC
 #CFLAGS	=	-g +p +w
 GCFLAGS =	-g -Wno-write-strings -fpermissive
