@@ -3,6 +3,7 @@
 
 
 #include <fstream>
+#include <stack>
 using namespace std;
 
 
@@ -52,6 +53,8 @@ private:
     
     ofstream      out;                                // Output file stream.
     
+    stack<sym_index> arg_stack;                       // Argument stack
+
     int  align(int);                                  // Align a stack frame.
     void prologue(symbol *);                          // Initialize new env.
     void epilogue(symbol *);                          // Leave env.

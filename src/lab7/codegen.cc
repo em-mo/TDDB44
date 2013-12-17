@@ -114,6 +114,28 @@ void code_generator::prologue(symbol *new_env)
             << long_symbols << ")" << endl;
 
     /* Your code here. */
+	
+	// Create the AR
+    out << "\t\t" << "set" << "\t" << -ar_size <<"%l0" << endl;
+    out << "\t\t" << "save" << "\t" << "%sp,%l0%sp" << endl;
+
+    // Save display
+    out << "\t\t" << "st" << "\t" << "%g" << new_env->level + 1 << 
+    	",[%fp+" << DISPLAY_REG_OFFSET << "]" << endl;
+
+    // Update display
+    out << "\t\t" << "mov" << "\t" << "%fp,%g" << new_env->level + 1 << endl;
+
+    // Save the arguments
+    int current_addr = FIRST_ARG_OFFSET;
+    int current_reg = 0;
+    while (last_arg != NULL)
+    {
+	    out << "\t\t" << "st" << "\t" << "%i" << current_reg << ",[%fp+" << current_addr << "]" << endl;
+	    current_addr += 4;
+	    current_reg += 1;
+	    last_arg = last_arg->preceding;
+    }
 
     out << flush;
 }
@@ -129,6 +151,14 @@ void code_generator::epilogue(symbol *old_env)
         out << "\t" << "! EPILOGUE (" << short_symbols << old_env
             << long_symbols << ")" << endl;
     /* Your code here. */
+	
+	// Restore display
+    out << "\t\t" << "ld" << "\t" << 
+    	"[%fp+" << DISPLAY_REG_OFFSET << "]," << "%g" << old_env->level + 1 << endl;
+
+    // Return
+    out << "\t\t" << "ret";
+    out << "\t\t" << "restore";
 
     out << flush;
 }
