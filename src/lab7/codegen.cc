@@ -299,8 +299,14 @@ void code_generator::funcall(quadruple *q)
     }
 
     char *name = sym_tab->pool_lookup(name_id);
-    out << "\t\t" << "call" << "\t" << "L" << label << "! " << name << endl;
+    out << "\t\t" << "call" << "\t" << "L" << label << "\t! " << name << endl;
     out << "\t\t" << "nop" << endl;
+
+    if (sym_tab->get_symbol_tag(sym) == SYM_FUNC)
+    {
+        store(o0, q->sym3);
+    }
+
     delete[] name;
 }
 
