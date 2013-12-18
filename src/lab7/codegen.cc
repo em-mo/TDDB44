@@ -181,6 +181,9 @@ void code_generator::find(sym_index sym_p, int *level, int *offset)
    register. */
 void code_generator::fetch(sym_index sym_p, register_type dest)
 {
+
+    if (sym_p == NULL_SYM)
+        return;
     /* Your code here. */
     int level, offset;
     find(sym_p, &level, &offset);
