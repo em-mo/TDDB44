@@ -116,8 +116,8 @@ void code_generator::prologue(symbol *new_env)
     /* Your code here. */
 	
 	// Create the AR
-    out << "\t\t" << "set" << "\t" << -ar_size <<"%l0" << endl;
-    out << "\t\t" << "save" << "\t" << "%sp,%l0%sp" << endl;
+    out << "\t\t" << "set" << "\t" << -ar_size <<",%l0" << endl;
+    out << "\t\t" << "save" << "\t" << "%sp,%l0,%sp" << endl;
 
     // Save display
     out << "\t\t" << "st" << "\t" << "%g" << new_env->level + 1 << 
@@ -157,8 +157,8 @@ void code_generator::epilogue(symbol *old_env)
     	"[%fp+" << DISPLAY_REG_OFFSET << "]," << "%g" << old_env->level + 1 << endl;
 
     // Return
-    out << "\t\t" << "ret";
-    out << "\t\t" << "restore";
+    out << "\t\t" << "ret" << endl;
+    out << "\t\t" << "restore" << endl;
 
     out << flush;
 }
@@ -171,8 +171,27 @@ void code_generator::find(sym_index sym_p, int *level, int *offset)
 {
     /* Your code here. */
     symbol *sym = sym_tab->get_symbol(sym_p);
-    *level = sym->level;
-    *offset = sym->offset;
+    if (sym->tag == SYM_PARAM)
+    {
+        *level = sym->level;
+        *offset = sym->offset + FIRST_ARG_OFFSET;        
+    }
+    else if (sym->tag == SYM_ARRAY)
+    {
+        array_symbol *arr_sym = sym->get_array_symbol();
+        *level = arr_sym->level;
+        *offset = arr_sym->offset + sym_tab->get_size(arr_sym->type) * arr_sym->array_cardinality;
+    }
+    else if (sym->tag == SYM_VAR)
+    {
+        *level = sym->level;
+        *offset = -sym->offset - sym_tab->get_size(sym->type);
+    }
+    else
+    {
+        cout << sym->tag << endl;
+        fatal("Wrong tag in code_generato::find");
+    }
 }
 
 
@@ -181,12 +200,8 @@ void code_generator::find(sym_index sym_p, int *level, int *offset)
    register. */
 void code_generator::fetch(sym_index sym_p, register_type dest)
 {
-
-    if (sym_p == NULL_SYM)
-        return;
     /* Your code here. */
     int level, offset;
-    find(sym_p, &level, &offset);
     sym_type type = sym_tab->get_symbol_tag(sym_p);
 
     if (type == SYM_CONST)
@@ -203,14 +218,19 @@ void code_generator::fetch(sym_index sym_p, register_type dest)
     }
     else
     {
-        if (offset > 0xfffffffffffff)
+        find(sym_p, &level, &offset);
+        if (offset < -0x7ff && offset > 0x7ff)
         {
             out << "\t\t" << "set" << "\t" << offset << "%l0" << endl;
             out << "\t\t" << "ld" << "\t" << "[%g" << level << "-%l0]," << reg[dest] << endl;
         }
+        else if (offset < 0)
+        {
+            out << "\t\t" << "ld" << "\t" << "[%g" << level << offset << "]," << reg[dest] << endl;
+        }
         else
         {
-            out << "\t\t" << "ld" << "\t" << "[%g" << level << "-" << offset << "]," << reg[dest] << endl;
+            out << "\t\t" << "ld" << "\t" << "[%g" << level << "+" << offset << "]," << reg[dest] << endl;
         }
     }
 }
@@ -223,14 +243,18 @@ void code_generator::store(register_type src, sym_index sym_p)
     /* Your code here. */
     int level, offset;
     find(sym_p, &level, &offset);
-    if (offset > 0xfffffffffffff)
+    if (offset < -0x7ff && offset > 0x7ff)
     {
         out << "\t\t" << "set" << "\t" << offset << "%l0" << endl;
         out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << "-%l0]," << endl;
     }
+    else if (offset < 0)
+    {
+        out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << offset << "]" << endl;
+    }
     else
     {
-        out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << "-" << offset << "]" << endl;
+        out << "\t\t" << "st" << "\t" << reg[src] << ",[%g" << level << "+" << offset << "]" << endl;
     }
 }
 
@@ -265,7 +289,7 @@ void code_generator::funcall(quadruple *q)
     }
 
     char current_reg = o0;
-    for (i = 0; i < q->sym2; ++i)
+    for (i = 0; i < q->int2; ++i)
     {
         sym_index current_arg = arg_stack.top();
         arg_stack.pop();

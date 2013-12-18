@@ -429,7 +429,6 @@ sym_index ast_procedurecall::generate_quads(quad_list &q)
     /* Your code here. */
     int nr_params = 0;
     generate_parameter_list(q, parameter_list, &nr_params);
-
     q += new quadruple(q_call, id->sym_p, nr_params, NULL_SYM);
 
     return NULL_SYM;
@@ -590,7 +589,7 @@ sym_index ast_return::generate_quads(quad_list &q)
     }
     else
     {
-        q += new quadruple(q_ireturn, q.last_label, NULL_SYM, NULL_SYM);
+        q += new quadruple(q_jmp, q.last_label, NULL_SYM, NULL_SYM);
         return NULL_SYM;
     }
 }
