@@ -65,6 +65,7 @@ private:
     void fetch(sym_index, const register_type);       // memory -> register.
     void store(const register_type, sym_index);       // register -> memory.
     void array_address(sym_index, const register_type); // get array base addr.
+    void funcall(quadruple *);
 
 public:
     // Constructor. Arg = filename of assembler outfile.

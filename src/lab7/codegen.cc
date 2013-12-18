@@ -242,7 +242,40 @@ void code_generator::array_address(sym_index sym_p, register_type dest)
     out << "\t\t" << "sub" << "\t" << "%g" << level << "," << offset << "," << reg[dest] << endl;
 }
 
+void code_generator::funcall(quadruple *q)
+{
+    int i;
+    int label;
+    pool_index name_id;
+    sym_index sym = q->sym1;
+    if (sym_tab->get_symbol_tag(sym) == SYM_FUNC)
+    {
+        function_symbol *func_sym = sym_tab->get_symbol(sym)->get_function_symbol();
+        name_id = func_sym->id;
+        label = func_sym->label_nr;
+    }
+    else
+    {
+        procedure_symbol *proc_sym = sym_tab->get_symbol(sym)->get_procedure_symbol();
+        name_id = proc_sym->id;
+        label = proc_sym->label_nr;   
+    }
 
+    char current_reg = o0;
+    for (i = 0; i < q->sym2; ++i)
+    {
+        sym_index current_arg = arg_stack.top();
+        arg_stack.pop();
+
+        fetch(current_arg, current_reg);
+        current_reg += 1;
+    }
+
+    char *name = sym_tab->pool_lookup(name_id);
+    out << "\t\t" << "call" << "\t" << "L" << label << "! " << name << endl;
+    out << "\t\t" << "nop" << endl;
+    delete[] name;
+}
 
 /* This method expands a quad_list into assembler code, quad for quad. */
 void code_generator::expand(quad_list *q_list)
@@ -523,12 +556,12 @@ void code_generator::expand(quad_list *q_list)
 
         case q_param:
             /* Your code here. */
-
+            arg_stack.push(q->sym1);
             break;
 
         case q_call:
             /* Your code here. */
-
+            funcall(q);
             break;
 
         case q_rreturn:

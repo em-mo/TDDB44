@@ -418,7 +418,8 @@ void ast_greaterthan::optimize()
 void ast_procedurecall::optimize()
 {
     /* Your code here. */
-    parameter_list->optimize();
+    if (parameter_list != NULL)
+        parameter_list->optimize();
 }
 
 
@@ -464,15 +465,19 @@ void ast_if::optimize()
 void ast_return::optimize()
 {
     /* Your code here. */
-    value->optimize();
-    value = optimizer->fold_constants(value);
+    if (value != NULL)
+    {
+        value->optimize();
+        value = optimizer->fold_constants(value);
+    }
 }
 
 
 void ast_functioncall::optimize()
 {
     /* Your code here. */
-    parameter_list->optimize();
+    if (parameter_list != NULL)
+        parameter_list->optimize();
 }
 
 void ast_uminus::optimize()
